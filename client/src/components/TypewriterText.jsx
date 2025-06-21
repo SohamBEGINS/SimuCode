@@ -31,7 +31,7 @@ const TypewriterText = ({ className = "" }) => {
 
   return (
     <span
-      className={`inline-block align-middle px-2 sm:px-2 md:px-3 bg-cyan-300 text-black py-0.5 sm:py-1 md:py-2 justify-center rounded-lg font-mono text-2xl md:text-3xl ${className}`}
+      className={`inline-block align-middle px-2 sm:px-2 md:px py-0.5 sm:py-1 md:py-2 justify-center rounded-lg font-mono text-2xl md:text-6xl ${className}`}
       style={{ minWidth: "8ch" }}
     >
       {words[index].substring(0, subIndex)}

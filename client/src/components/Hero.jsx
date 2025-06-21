@@ -8,13 +8,13 @@ const Hero = () => {
         {/* Left Content */}
         <div className="flex-[3] max-w-3xl text-left">
           <h1 className="text-white font-extrabold text-[3.5rem] md:text-[5rem] leading-tight mb-2 drop-shadow-xl font-sans">
-            Simulate Real<br />Coding
-          </h1>
-          <div className="mb-8">
-            <span className="inline-block bg-cyan-400 px-6 py-2 rounded-xl font-bold text-black text-[2.5rem] md:text-[3.5rem] shadow-lg">
+            Simulate Real Coding
+            <div className="mb-8 inline-block">
+            <span className="inline-bloc px-6 py-2 font-bold text-white text-[4.5rem] md:text-[5rem] shadow-lg">
               <TypewriterText />
             </span>
           </div>
+          </h1>
           <p className="italic text-white text-lg md:text-2xl mb-10 drop-shadow">
             Practice, Learn, and Succeed in Tech Interviews by simulating real-time pressure environments.
           </p>
