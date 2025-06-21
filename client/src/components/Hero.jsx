@@ -1,42 +1,46 @@
 import TypewriterText from "./TypewriterText";
 import TiltedCard from "../styles/TiltedCard";
-import RotatingText from "../styles/RotatingText";
 
 const Hero = () => {
   return (
-    <section className="relative min-h-[100vh] flex flex-col justify-center py-20 px-6 mb-32 rounded-3xl shadow-2xl">
-      <div className="flex flex-col md:flex-row items-center md:items-center w-full gap-16">
+    <section className="relative min-h-[100vh] flex flex-col justify-center px-4 md:px-12 py-12">
+      <div className="flex flex-col md:flex-row items-start md:items-center w-full gap-12 md:gap-20">
+        {/* Left Content */}
         <div className="flex-[3] max-w-3xl text-left">
-          <h1 className="text-6xl md:text-8xl font-extrabold mb-8 leading-tight drop-shadow-lg">
-            Simulate Real Coding 
-        <TypewriterText className="text-4xl md:text-6xl" /> 
+          <h1 className="text-white font-extrabold text-[3.5rem] md:text-[5rem] leading-tight mb-2 drop-shadow-xl font-sans">
+            Simulate Real<br />Coding
           </h1>
-          <p className="italic text-white-700 mt-8 mb-16 text-2xl md:text-3xl">
-            Practice, Learn, and Succeed in Tech Interviews by simulating real-time
-            pressure environments.
+          <div className="mb-8">
+            <span className="inline-block bg-cyan-400 px-6 py-2 rounded-xl font-bold text-black text-[2.5rem] md:text-[3.5rem] shadow-lg">
+              <TypewriterText />
+            </span>
+          </div>
+          <p className="italic text-white text-lg md:text-2xl mb-10 drop-shadow">
+            Practice, Learn, and Succeed in Tech Interviews by simulating real-time pressure environments.
           </p>
-          <button className="mt-4 md:mt-12 bg-gradient-to-r from-green-500 to-cyan-500 text-white px-14 py-6 rounded-2xl text-2xl font-bold shadow-lg hover:from-green-600 hover:to-cyan-600 transition-all duration-200">
+          <button
+            className="mt-8 px-16 py-7 rounded-full text-3xl font-extrabold text-white bg-cyan-400 shadow-[0_0_32px_8px_rgba(34,211,238,0.7)] transition duration-200 hover:bg-cyan-300 hover:shadow-[0_0_48px_16px_rgba(34,211,238,0.9)] focus:outline-none focus:ring-4 focus:ring-cyan-300"
+          >
             Start Interview
           </button>
         </div>
-        <div className="flex-[1] flex justify-center md:justify-end w-full md:w-auto">
-          <TiltedCard
-            imageSrc="https://i.scdn.co/image/ab67616d0000b273d9985092cd88bffd97653b58"
-            containerHeight="320px"
-            containerWidth="320px"
-            imageHeight="320px"
-            imageWidth="320px"
-            rotateAmplitude={12}
-            scaleOnHover={1.2}
+        {/* Right Card */}
+        <div className="flex-[2] flex justify-center md:justify-end w-full md:w-auto">
+          <div className="relative">
+            <TiltedCard
+              imageSrc="https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=600&q=80"
+              containerHeight="420px"
+              containerWidth="420px"
+              imageHeight="420px"
+             imageWidth="420px"
+             rotateAmplitude={7}
+             scaleOnHover={1.05}
             showMobileWarning={false}
-            showTooltip={true}
+            showTooltip={false}
             displayOverlayContent={true}
-            overlayContent={
-              <p className="tilted-card-demo-text text-center font-semibold text-lg text-white bg-black/60 rounded-lg px-2 py-1">
-                Kendrick Lamar - GNX
-              </p>
-            }
-          />
+              className="rounded-2xl border-2 border-white/80 shadow-lg bg-black/60"
+            />
+          </div>
         </div>
       </div>
     </section>
