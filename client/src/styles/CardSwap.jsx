@@ -20,17 +20,22 @@ export const Card = forwardRef(
 );
 Card.displayName = "Card";
 
-const makeSlot = (
-  i,
-  distX,
-  distY,
-  total
-) => ({
-  x: i * distX,
-  y: -i * distY,
-  z: -i * distX * 1.5,
-  zIndex: total - i,
-});
+// Enhanced slot for 3D deck effect
+const makeSlot = (i, distX, distY, total) => {
+  const spread = Math.max(1, total - 1);
+  const rotate = -14 + (i * 28) / spread; // -14deg to +14deg
+  const scale = 1 - i * 0.06;
+  const opacity = 1 - i * 0.13;
+  return {
+    x: i * distX,
+    y: -i * distY,
+    z: -i * distX * 1.2,
+    rotateY: rotate,
+    scale,
+    opacity,
+    zIndex: total - i,
+  };
+};
 
 const placeNow = (el, slot, skew) =>
   gsap.set(el, {
@@ -40,6 +45,9 @@ const placeNow = (el, slot, skew) =>
     xPercent: -50,
     yPercent: -50,
     skewY: skew,
+    rotateY: slot.rotateY,
+    scale: slot.scale,
+    opacity: slot.opacity,
     transformOrigin: "center center",
     zIndex: slot.zIndex,
     force3D: true,
@@ -53,7 +61,7 @@ const CardSwap = ({
   delay = 5000,
   pauseOnHover = false,
   onCardClick,
-  onSwap, // <-- add this
+  onSwap,
   skewAmount = 6,
   easing = "elastic",
   children,
@@ -83,7 +91,6 @@ const CardSwap = ({
   );
   const refs = useMemo(
     () => childArr.map(() => React.createRef()),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [childArr.length]
   );
 
@@ -113,8 +120,12 @@ const CardSwap = ({
       const tl = gsap.timeline();
       tlRef.current = tl;
 
+      // Animate front card out (down, fade, rotate)
       tl.to(elFront, {
-        y: "+=500",
+        y: "+=400",
+        opacity: 0,
+        scale: 0.85,
+        rotateY: 30,
         duration: config.durDrop,
         ease: config.ease,
       });
@@ -130,10 +141,13 @@ const CardSwap = ({
             x: slot.x,
             y: slot.y,
             z: slot.z,
+            rotateY: slot.rotateY,
+            scale: slot.scale,
+            opacity: slot.opacity,
             duration: config.durMove,
             ease: config.ease,
           },
-          `promote+=${i * 0.15}`
+          `promote+=${i * 0.13}`
         );
       });
 
@@ -151,11 +165,20 @@ const CardSwap = ({
         undefined,
         "return"
       );
-      tl.set(elFront, { x: backSlot.x, z: backSlot.z }, "return");
+      tl.set(elFront, {
+        x: backSlot.x,
+        z: backSlot.z,
+        rotateY: backSlot.rotateY,
+        scale: backSlot.scale,
+        opacity: backSlot.opacity,
+      }, "return");
       tl.to(
         elFront,
         {
           y: backSlot.y,
+          opacity: backSlot.opacity,
+          scale: backSlot.scale,
+          rotateY: backSlot.rotateY,
           duration: config.durReturn,
           ease: config.ease,
         },
@@ -165,7 +188,7 @@ const CardSwap = ({
       tl.call(() => {
         order.current = [...rest, front];
         if (typeof onSwap === "function") {
-          onSwap(rest[0] ?? 0); // call with the new front card index
+          onSwap(order.current[0]); // call with the new front card index
         }
       });
     };
@@ -192,8 +215,7 @@ const CardSwap = ({
       };
     }
     return () => clearInterval(intervalRef.current);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cardDistance, verticalDistance, delay, pauseOnHover, skewAmount, easing, onSwap]);
+  }, [cardDistance, verticalDistance, delay, pauseOnHover, skewAmount, easing, onSwap, refs.length]);
 
   const rendered = childArr.map((child, i) =>
     isValidElement(child)
@@ -211,7 +233,7 @@ const CardSwap = ({
   return (
     <div
       ref={container}
-      className="absolute top-1/2 left-0 md:static md:top-auto md:left-auto flex items-center justify-center w-full h-full md:w-auto md:h-auto perspective-[900px]"
+      className="absolute top-1/2 left-0 md:static md:top-auto md:left-auto flex items-center justify-center w-full h-full md:w-auto md:h-auto perspective-[1200px]"
       style={{ width, height }}
     >
       {rendered}

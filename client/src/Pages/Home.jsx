@@ -51,18 +51,18 @@ const HowItWorksSection = () => {
   };
 
   return (
-    <section className="relative max-w-6xl w-full mx-auto flex flex-col md:flex-row items-center justify-between bg-black/70 rounded-2xl mt-8 mb-20 px-4 md:px-16 py-16 shadow-lg border border-white/10 backdrop-blur-md overflow-visible min-h-[340px]">
+    <section className="relative max-w-6xl w-full mx-auto flex flex-col md:flex-row items-center justify-between bg-black/80 rounded-3xl mt-12 mb-20 px-4 md:px-20 py-16 shadow-2xl border border-cyan-400/20 backdrop-blur-lg overflow-visible min-h-[340px]">
       {/* Left: Large Stage Text */}
       <div className="flex-1 flex flex-col items-center md:items-start justify-center px-2 md:pl-10 z-10">
-        <h2 className="text-3xl md:text-4xl font-bold text-white mb-6 tracking-tight">
+        <h2 className="text-4xl md:text-5xl font-extrabold text-white mb-8 tracking-tight">
           How It Works
         </h2>
         <div className="w-full max-w-xl">
           <div className="transition-all duration-500">
-            <div className="text-cyan-300 text-2xl md:text-3xl font-bold mb-2">
+            <div className="text-cyan-300 text-3xl md:text-4xl font-bold mb-4">
               {cardStages[activeIdx].title}
             </div>
-            <div className="text-gray-200 text-lg md:text-xl font-medium">
+            <div className="text-gray-100 text-xl md:text-2xl font-medium">
               {cardStages[activeIdx].description}
             </div>
           </div>
@@ -71,15 +71,15 @@ const HowItWorksSection = () => {
       {/* Card Stack Animation at bottom right of container */}
       <div className="flex-1 flex items-end justify-end relative w-full h-full min-h-[260px]">
         <div
-          className="absolute bottom-0 right-0 w-[340px] h-[220px] hidden md:block"
-          style={{ transform: "rotateY(-18deg) rotateX(6deg) scale(1.02)" }}
+          className="absolute bottom-0 right-0 w-[360px] h-[240px] hidden md:block"
+          style={{ transform: "rotateY(-18deg) rotateX(6deg) scale(1.06)" }}
         >
           <CardSwap
-            width={320}
+            width={340}
             height={220}
-            cardDistance={50}
-            verticalDistance={32}
-            delay={3500}
+            cardDistance={60}
+            verticalDistance={36}
+            delay={3200}
             pauseOnHover={true}
             skewAmount={12}
             easing="power1.inOut"
