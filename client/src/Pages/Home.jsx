@@ -1,6 +1,7 @@
 import Hero from "../components/Hero";
 import HowItWorks from "../components/HowItWorks";
 import BeamBackground from "../components/BeamBackground";
+import Footer from "../components/Footer";
 
 const Home = () => {
   return (
@@ -8,7 +9,9 @@ const Home = () => {
       <BeamBackground />
       <main className="flex-1 flex flex-col">
         <Hero />
+         <div className="h-12 md:h-24" />
         <HowItWorks />
+        <Footer />
       </main>
     </div>
   );

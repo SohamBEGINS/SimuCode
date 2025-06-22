@@ -8,13 +8,10 @@ const Navbar = () => {
           SimuCode
         </div>
         <div className="flex items-center space-x-6">
-          <Link to="/" className="uppercase text-lg font-semibold text-white/90 hover:text-cyan-400 transition">
+          <Link to="/" className="uppercase text-lg font-semibold text-white hover:text-cyan-400 transition">
             Home
           </Link>
-          <Link to="/about" className="uppercase text-lg font-semibold text-white/90 hover:text-cyan-400 transition">
-            About
-          </Link>
-          <Link to="/features" className="uppercase text-lg font-semibold text-white/90 hover:text-cyan-400 transition">
+          <Link to="/features" className="uppercase text-lg font-semibold text-white visited:text-white/90 hover:text-cyan-400 transition no-underline">
             Features
           </Link>
           <Link
