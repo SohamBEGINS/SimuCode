@@ -94,6 +94,7 @@ const CardSwap = ({
     [childArr.length]
   );
 
+  // Use a stable order ref and a stable interval
   const order = useRef(
     Array.from({ length: childArr.length }, (_, i) => i)
   );
@@ -101,6 +102,9 @@ const CardSwap = ({
   const tlRef = useRef(null);
   const intervalRef = useRef();
   const container = useRef(null);
+
+  // Ensure only one swap runs at a time
+  const swapping = useRef(false);
 
   useEffect(() => {
     const total = refs.length;
@@ -112,12 +116,25 @@ const CardSwap = ({
       )
     );
 
+    let timeoutId;
+    let isUnmounted = false;
+
     const swap = () => {
-      if (order.current.length < 2) return;
+      if (order.current.length < 2 || swapping.current) return;
+      swapping.current = true;
 
       const [front, ...rest] = order.current;
       const elFront = refs[front].current;
-      const tl = gsap.timeline();
+      const tl = gsap.timeline({
+        onComplete: () => {
+          swapping.current = false;
+          // Move the front card to the back for looping
+          order.current = [...rest, front];
+          if (typeof onSwap === "function") {
+            onSwap(order.current[0]);
+          }
+        }
+      });
       tlRef.current = tl;
 
       // Animate front card out (down, fade, rotate)
@@ -184,37 +201,39 @@ const CardSwap = ({
         },
         "return"
       );
-
-      tl.call(() => {
-        order.current = [...rest, front];
-        if (typeof onSwap === "function") {
-          onSwap(order.current[0]); // call with the new front card index
-        }
-      });
     };
 
-    swap();
-    intervalRef.current = window.setInterval(swap, delay);
+    // Use setTimeout instead of setInterval to avoid overlapping swaps
+    const loop = () => {
+      if (isUnmounted) return;
+      swap();
+      timeoutId = setTimeout(loop, delay);
+    };
+    loop();
 
     if (pauseOnHover) {
       const node = container.current;
       const pause = () => {
         tlRef.current?.pause();
-        clearInterval(intervalRef.current);
+        clearTimeout(timeoutId);
       };
       const resume = () => {
         tlRef.current?.play();
-        intervalRef.current = window.setInterval(swap, delay);
+        timeoutId = setTimeout(loop, delay);
       };
       node.addEventListener("mouseenter", pause);
       node.addEventListener("mouseleave", resume);
       return () => {
         node.removeEventListener("mouseenter", pause);
         node.removeEventListener("mouseleave", resume);
-        clearInterval(intervalRef.current);
+        clearTimeout(timeoutId);
+        isUnmounted = true;
       };
     }
-    return () => clearInterval(intervalRef.current);
+    return () => {
+      clearTimeout(timeoutId);
+      isUnmounted = true;
+    };
   }, [cardDistance, verticalDistance, delay, pauseOnHover, skewAmount, easing, onSwap, refs.length]);
 
   const rendered = childArr.map((child, i) =>
