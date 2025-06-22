@@ -15,13 +15,38 @@ const Home = () => (
     <BeamBackground />
     <main className="flex-1 flex flex-col">
       <Hero />
-      <div className="h-20 md:h-32" />
       <div className="relative z-10">
+        <div className="flex justify-center mb-8">
+  <div className="h-2 w-24 rounded-full bg-gradient-to-r from-cyan-400 via-cyan-200 to-cyan-400 opacity-70"></div>
+</div>
         <ScrollReveal
-          lines={revealLines}
-          className="max-w-3xl mx-auto text-center font-mono text-white text-3xl md:text-5xl font-bold py-12 md:py-20 mb-24 md:mb-32"
-          lineClassName="mb-8 md:mb-12 leading-snug"
-        />
+  lines={revealLines}
+  className="
+    w-11/12 max-w-5xl mx-auto
+    text-center
+    font-mono font-semibold uppercase
+    text-white
+    text-lg md:text-2xl
+    tracking-widest
+    drop-shadow-[0_2px_16px_rgba(0,255,255,0.10)]
+    py-10 md:py-16
+    mb-16 md:mb-28
+    rounded-2xl
+    shadow
+    space-y-10 md:space-y-14
+    transition-all
+    duration-700
+  "
+  lineClassName="
+    mb-0
+    leading-relaxed
+    transition-all
+    duration-700
+  "
+/>
+
+
+
       </div>
       
       
@@ -30,7 +55,3 @@ const Home = () => (
 );
 
 export default Home;
-
-// This is the main Home component for the application.
-// It imports and renders the Hero and HowItWorks components.
-// how the export name Home is used ?
