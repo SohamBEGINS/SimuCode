@@ -53,6 +53,7 @@ const CardSwap = ({
   delay = 5000,
   pauseOnHover = false,
   onCardClick,
+  onSwap, // <-- add this
   skewAmount = 6,
   easing = "elastic",
   children,
@@ -163,6 +164,9 @@ const CardSwap = ({
 
       tl.call(() => {
         order.current = [...rest, front];
+        if (typeof onSwap === "function") {
+          onSwap(rest[0] ?? 0); // call with the new front card index
+        }
       });
     };
 
@@ -189,7 +193,7 @@ const CardSwap = ({
     }
     return () => clearInterval(intervalRef.current);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cardDistance, verticalDistance, delay, pauseOnHover, skewAmount, easing]);
+  }, [cardDistance, verticalDistance, delay, pauseOnHover, skewAmount, easing, onSwap]);
 
   const rendered = childArr.map((child, i) =>
     isValidElement(child)
@@ -207,7 +211,7 @@ const CardSwap = ({
   return (
     <div
       ref={container}
-      className="absolute bottom-0 right-0 transform translate-x-[5%] translate-y-[20%] origin-bottom-right perspective-[900px] overflow-visible max-[768px]:translate-x-[25%] max-[768px]:translate-y-[25%] max-[768px]:scale-[0.75] max-[480px]:translate-x-[25%] max-[480px]:translate-y-[25%] max-[480px]:scale-[0.55]"
+      className="absolute top-1/2 left-0 md:static md:top-auto md:left-auto flex items-center justify-center w-full h-full md:w-auto md:h-auto perspective-[900px]"
       style={{ width, height }}
     >
       {rendered}
