@@ -10,7 +10,7 @@ const Hero = () => {
           <h1 className="text-white font-extrabold text-[3.5rem] md:text-[5rem] leading-tight mb-2 drop-shadow-xl font-sans">
             Simulate Real Coding
             <div className="mb-8 inline-block">
-            <span className="inline-bloc px-6 py-2 font-bold text-white text-[4.5rem] md:text-[5rem] shadow-lg">
+            <span className="inline-bloc px-6 py-2 font-extrabold text-white text-[4.5rem] md:text-[5rem] shadow-lg">
               <TypewriterText />
             </span>
           
@@ -35,3 +35,4 @@ const Hero = () => {
 };
 
 export default Hero;
+

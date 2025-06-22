@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 
 const Navbar = () => {
   return (
-    <nav className="fixed top-0 left-0 w-full z-50 bg-black/80 backdrop-blur border-b border-white/10 shadow-md">
+    <nav className="top-0 left-0 w-full z-50 bg-black/80 backdrop-blur border-b border-white/10 shadow-md">
       <div className="max-w-7xl mx-auto flex justify-between items-center px-6 py-4">
         <div className="text-2xl font-extrabold tracking-tight text-white font-sans">
           SimuCode
