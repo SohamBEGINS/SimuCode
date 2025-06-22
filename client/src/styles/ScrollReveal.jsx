@@ -1,61 +1,53 @@
-import { useRef, useEffect, useState } from "react";
 import { motion, useAnimation } from "framer-motion";
+import { useInView } from "framer-motion";
+import { useRef, useEffect } from "react";
 
-const wordVariants = {
+const lineVariants = {
   hidden: { opacity: 0, y: 40, filter: "blur(8px)" },
   visible: (i) => ({
     opacity: 1,
     y: 0,
     filter: "blur(0px)",
     transition: {
-      delay: i * 0.08,
-      duration: 0.6,
+      duration: 0.7,
+      delay: i * 0.3,
       ease: "easeOut",
     },
   }),
 };
 
-const ScrollReveal = ({ text, className = "", wordClassName = "" }) => {
+const ScrollReveal = ({
+  lines = [],
+  className = "",
+  lineClassName = "",
+}) => {
   const ref = useRef(null);
+  const inView = useInView(ref, { once: false }); // changed here
   const controls = useAnimation();
-  const [hasAnimated, setHasAnimated] = useState(false);
 
   useEffect(() => {
-    const node = ref.current;
-    if (!node) return;
-    const observer = new window.IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && !hasAnimated) {
-          controls.start("visible");
-          setHasAnimated(true);
-        }
-      },
-      { threshold: 0.2 }
-    );
-    observer.observe(node);
-    return () => observer.disconnect();
-  }, [controls, hasAnimated]);
-
-  const words = text.split(" ");
+    if (inView) {
+      controls.start("visible");
+    } else {
+      controls.start("hidden");
+    }
+  }, [inView, controls]);
 
   return (
-    <section ref={ref} className={`w-full flex justify-center`}>
-      <div className={`flex flex-wrap justify-center ${className}`}>
-        {words.map((word, i) => (
-          <motion.span
-            key={i}
-            className={`${wordClassName} select-none`}
-            custom={i}
-            initial="hidden"
-            animate={controls}
-            variants={wordVariants}
-            style={{ display: "inline-block", marginRight: "0.25em" }}
-          >
-            {word}
-          </motion.span>
-        ))}
-      </div>
-    </section>
+    <div ref={ref} className={`flex flex-col items-center ${className}`}>
+      {lines.map((line, i) => (
+        <motion.div
+          key={i}
+          custom={i}
+          initial="hidden"
+          animate={controls}
+          variants={lineVariants}
+          className={`w-full ${lineClassName}`}
+        >
+          {line}
+        </motion.div>
+      ))}
+    </div>
   );
 };
 
