@@ -108,7 +108,7 @@ const HowItWorksSection = () => {
 
 const Home = () => (
   <div className="relative min-h-screen flex flex-col">
-    <BeamBackground />
+    
     <main className="flex-1 flex flex-col">
       <Hero />
       <div className="relative z-10">
