@@ -1,7 +1,14 @@
-import { SignUp } from "@clerk/clerk-react";
+import { SignUp ,useUser } from "@clerk/clerk-react";
 
 export default function SignUpPage() {
-  return (
+  const {isSignedIn} = useUser();
+    if(isSignedIn)
+    {
+        return <Navigate to ="/dashboard"/>
+    }
+  
+    return (
+
     <div className="min-h-screen flex items-center justify-center py-12 relative overflow-hidden">
       <div className="absolute inset-0 z-0 animate-gradient bg-[conic-gradient(at_top_left,_var(--tw-gradient-stops))] from-indigo-900 via-purple-900 to-gray-900 opacity-80" />
       
