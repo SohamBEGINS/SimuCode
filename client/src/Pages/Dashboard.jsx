@@ -1,10 +1,29 @@
-import { SignedIn , SignedOut , RedirectToSignIn } from "@clerk/clerk-react";
+import { SignedIn, SignedOut, RedirectToSignIn, useUser, UserButton } from "@clerk/clerk-react";
 
 export default function Dashboard() {
+  const { user ,isSignedIn,isLoaded} = useUser();
+  if(!isLoaded)
+  {
+    return <div>Loading...</div>
+  }
+  if(!isSignedIn)
+  {
+    return <div>Sign in to view this page</div>;
+  }
   return (
     <>
       <SignedIn>
-        <h1 className="text-3xl font-bold mb-4">Dashboard</h1>
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-3xl font-bold">Dashboard</h1>
+          <div className="flex items-center space-x-3">
+            {user && (
+              <span className="text-lg font-semibold text-cyan-600">
+                Welcome, {user.firstName || user.username || user.emailAddress}
+              </span>
+            )}
+            <UserButton/>
+          </div>
+        </div>
         {/* Add your form for question difficulty and duration here */}
         <form>
           <label>

@@ -3,6 +3,7 @@ import BeamBackground from "../components/BeamBackground";
 import ScrollReveal from "../styles/ScrollReveal";
 import CardSwap, { Card } from "../styles/CardSwap";
 import { useRef, useState } from "react";
+import Navbar from "../components/Navbar";
 
 const revealText =
   "FELT LIKE GETTING STUCK IN A REAL INTERVIEW? " +
@@ -51,6 +52,8 @@ const HowItWorksSection = () => {
   };
 
   return (
+    
+    
     <section className="relative max-w-6xl w-full mx-auto flex flex-col md:flex-row items-center justify-between bg-black/80 rounded-3xl mt-12 mb-20 px-4 md:px-20 py-16 shadow-2xl border border-cyan-400/20 backdrop-blur-lg overflow-visible min-h-[340px]">
       {/* Left: Large Stage Text */}
       <div className="flex-1 flex flex-col items-center md:items-start justify-center px-2 md:pl-10 z-10">
@@ -103,10 +106,13 @@ const HowItWorksSection = () => {
         </div>
       </div>
     </section>
+    
   );
 };
 
 const Home = () => (
+  <>
+  <Navbar/>
   <div className="relative min-h-screen flex flex-col">
     
     <main className="flex-1 flex flex-col">
@@ -145,6 +151,7 @@ const Home = () => (
       <HowItWorksSection />
     </main>
   </div>
+  </>
 );
 
 export default Home;
