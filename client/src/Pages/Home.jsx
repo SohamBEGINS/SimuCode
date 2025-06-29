@@ -52,8 +52,6 @@ const HowItWorksSection = () => {
   };
 
   return (
-    
-    
     <section className="relative max-w-6xl w-full mx-auto flex flex-col md:flex-row items-center justify-between bg-black/80 rounded-3xl mt-12 mb-20 px-4 md:px-20 py-16 shadow-2xl border border-cyan-400/20 backdrop-blur-lg overflow-visible min-h-[340px]">
       {/* Left: Large Stage Text */}
       <div className="flex-1 flex flex-col items-center md:items-start justify-center px-2 md:pl-10 z-10">
@@ -106,23 +104,28 @@ const HowItWorksSection = () => {
         </div>
       </div>
     </section>
-    
   );
 };
 
 const Home = () => (
   <>
-  <Navbar/>
-  <div className="relative min-h-screen flex flex-col">
-    
-    <main className="flex-1 flex flex-col">
-      <Hero />
-      <div className="relative z-10">
-        <div className="flex justify-center mb-8">
-          <div className="h-2 w-24 rounded-full bg-gradient-to-r from-cyan-400 via-cyan-200 to-cyan-400 opacity-70"></div>
-        </div>
-        <ScrollReveal
-          containerClassName="
+    <BeamBackground />
+    <Navbar />
+    <div
+      className="relative min-h-screen flex flex-col"
+      style={{ background: "transparent" }}
+    >
+      <main
+        className="flex-1 flex flex-col"
+        style={{ background: "transparent" }}
+      >
+        <Hero />
+        <div className="relative z-10">
+          <div className="flex justify-center mb-8">
+            <div className="h-2 w-24 rounded-full bg-gradient-to-r from-cyan-400 via-cyan-200 to-cyan-400 opacity-70"></div>
+          </div>
+          <ScrollReveal
+            containerClassName="
             w-11/12 max-w-5xl mx-auto
             text-center
             font-mono font-semibold uppercase
@@ -138,19 +141,19 @@ const Home = () => (
             transition-all
             duration-700
           "
-          textClassName="
+            textClassName="
             mb-0
             leading-relaxed
             transition-all
             duration-700
           "
-        >
-          {revealText}
-        </ScrollReveal>
-      </div>
-      <HowItWorksSection />
-    </main>
-  </div>
+          >
+            {revealText}
+          </ScrollReveal>
+        </div>
+        <HowItWorksSection />
+      </main>
+    </div>
   </>
 );
 

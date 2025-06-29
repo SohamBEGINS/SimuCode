@@ -17,7 +17,7 @@ export default function SignUpPage() {
         <div className="w-2 bg-gradient-to-b from-indigo-500 via-purple-500 to-pink-500 shadow-lg" />
         
         <div className="flex-1 bg-black/40 backdrop-blur-lg p-14 flex items-center justify-center border-r border-white/10">
-          <SignUp routing="path" path="/sign-up" forceRedirectUrl="/dashboard" />
+          <SignUp routing="path" path="/sign-up" fallbackRedirectUrl="http://localhost:5173/dashboard" />
         </div>
        
         <div className="flex-1 bg-black/30 backdrop-blur-lg p-14 flex flex-col items-center justify-center">

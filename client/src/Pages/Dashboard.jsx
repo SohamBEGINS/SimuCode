@@ -3,6 +3,10 @@ import StellarBackground from "../components/StellarBackground";
 import { useState } from "react";
 import DashboardNavbar from "../components/DashboardNavbar";
 import { useNavigate } from "react-router-dom";
+import TerminalShell from "@/components/TerminalShell";
+import DifficultySelection from "@/components/DifficultySelection";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 function LoadingOverlay() {
   return (
@@ -41,6 +45,10 @@ function SignInPrompt() {
 export default function Dashboard() {
   const { user, isSignedIn, isLoaded } = useUser();
   const [unlockedStages, setUnlockedStages] = useState(["dashboard"]);
+  const [difficulty, setDifficulty] = useState(null);
+
+  // Add some debugging
+  console.log("Dashboard loading state:", { isLoaded, isSignedIn, user });
 
   if (!isLoaded) {
     return (
@@ -58,39 +66,82 @@ export default function Dashboard() {
       </>
     );
   }
+
+  // welcome message
+  const topContent = (
+    <div className="text-center mb-12">
+      <h2 className={cn(
+        "text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text mb-2",
+        "bg-gradient-to-r from-cyan-300 via-blue-300 to-purple-300",
+        "drop-shadow-2xl tracking-tight"
+      )}>
+        Welcome {user?.firstName || user?.username || "Coder"}
+      </h2>
+      <div className="w-20 h-0.5 bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 rounded-full mx-auto mb-3"></div>
+      <p className="text-cyan-100/80 text-base md:text-lg font-light max-w-xl mx-auto">
+        Ready to take on your  coding challenge? Let's get started!
+      </p>
+    </div>
+  );
+
   return (
     <>
       <SignedIn>
-        {/* Fade-in for background and content */}
         <div className="animate-fade-in">
           <StellarBackground />
-          <div className="relative min-h-screen flex flex-col items-center">
-            <DashboardNavbar unlockedStages={unlockedStages} onNav={(stage) => { /* handle nav */ }} />
-            <div className="w-full flex flex-col items-center mt-6">
-              <h2 className="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-cyan-100 to-cyan-400 drop-shadow-lg mb-8 tracking-tight">
-                Welcome, {user.firstName || user.username || user.emailAddress}
-              </h2>
-              <div className="w-full max-w-3xl bg-white/10 border border-cyan-400/20 rounded-3xl shadow-2xl backdrop-blur-lg p-10">
-                {/* Place your dashboard content here */}
-                <form>
-                  <label>
-                    Difficulty:
-                    <select className="ml-2">
-                      <option>Easy</option>
-                      <option>Medium</option>
-                      <option>Hard</option>
-                    </select>
-                  </label>
-                  <br />
-                  <label>
-                    Duration (minutes):
-                    <input type="number" min="10" max="120" className="ml-2" />
-                  </label>
-                  <br />
-                  <button type="submit" className="mt-4 px-4 py-2 bg-cyan-500 text-white rounded">
-                    Start Interview
-                  </button>
-                </form>
+          <div className="relative h-screen flex flex-col">
+            <DashboardNavbar 
+              unlockedStages={unlockedStages} 
+              onNav={(stage) => { console.log("Navigation to:", stage); }} 
+            />
+            
+            <div className="flex-1 flex flex-col px-4 pt-8 pb-4 mt-16 overflow-hidden">
+              <div className="flex-shrink-0">
+                {topContent}
+              </div>
+              <div className="flex-1 flex items-center justify-center">
+                <TerminalShell
+                  title={!difficulty ? "Interview Setup" : "Interview Stage"}
+                  progress={
+                    !difficulty
+                      ? <span className="text-cyan-300 font-semibold">Step 1 of 5</span>
+                      : <span className="text-green-300 font-semibold">Step 2 of 5</span>
+                  }
+                  footer={null}
+                >
+                  {!difficulty ? (
+                    <DifficultySelection onSelect={setDifficulty} />
+                  ) : (
+                    <div className="text-center py-12">
+                      <div className="text-center mb-8">
+                        <h3 className={cn(
+                          "text-3xl font-bold text-transparent bg-clip-text mb-4",
+                          "bg-gradient-to-r from-green-300 via-cyan-300 to-blue-300",
+                          "drop-shadow-lg tracking-tight"
+                        )}>
+                          <span className="capitalize">{difficulty}</span> Challenge Selected
+                        </h3>
+                        <p className="text-cyan-100/70 text-lg mb-6">Prepare yourself for the interview ahead</p>
+                      </div>
+                      <div className="text-cyan-100 text-2xl mb-6">
+                        🚀 Get ready for your <span className="capitalize font-bold text-cyan-300">{difficulty}</span> interview!
+                      </div>
+                      <p className="text-cyan-100/70 text-lg mb-8">
+                        Your coding challenge is about to begin. Take a deep breath and showcase your skills.
+                      </p>
+                      <Button 
+                        className={cn(
+                          "px-8 py-4 text-lg font-bold rounded-xl",
+                          "bg-gradient-to-r from-green-500 to-emerald-500",
+                          "hover:from-green-400 hover:to-emerald-400",
+                          "shadow-xl shadow-green-500/25 transition-all duration-300 hover:scale-105"
+                        )}
+                      >
+                        Begin Challenge
+                      </Button>
+                    </div>
+                  )}
+                </TerminalShell>
               </div>
             </div>
           </div>
