@@ -1,5 +1,6 @@
 import { SignIn, useUser } from "@clerk/clerk-react";
 import { Navigate } from "react-router-dom";
+import BeamBackground from "@/components/BeamBackground";
 
 export default function SignInPage() {
   const { isSignedIn } = useUser();
@@ -8,6 +9,8 @@ export default function SignInPage() {
   }
 
   return (
+    <>
+    <BeamBackground/>
     <div className="min-h-screen flex items-center justify-center py-12 relative overflow-hidden">
       <div className="absolute inset-0 z-0 animate-gradient bg-[conic-gradient(at_top_left,_var(--tw-gradient-stops))] from-indigo-900 via-purple-900 to-gray-900 opacity-80" />
       
@@ -27,5 +30,6 @@ export default function SignInPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }
