@@ -20,7 +20,7 @@ export default function TerminalShell({
         "before:bg-gradient-to-r before:from-green-400/20 before:via-emerald-400/20 before:to-cyan-400/20",
         "before:mask-[linear-gradient(#fff_0_0)_content-box,linear-gradient(#fff_0_0)]",
         "before:mask-composite-[subtract] before:-z-10",
-        "flex flex-col h-[55vh] font-mono",
+        "flex flex-col h-[70vh] font-mono",
         className
       )}
       role="region"

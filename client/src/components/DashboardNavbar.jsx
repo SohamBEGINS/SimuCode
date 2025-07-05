@@ -11,7 +11,18 @@ const stages = [
   { key: "feedback", label: "Feedback" },
 ];
 
-export default function DashboardNavbar({ unlockedStages = ["dashboard"], onNav, activeStage = "dashboard" }) {
+export default function DashboardNavbar({
+   unlockedStages = ["dashboard"], 
+   onNav,
+   currentStage = "difficulty-selection"}) {
+
+    const getActiveStage = () => {
+      if (currentStage === "difficulty-selection") return "dashboard";
+      if (currentStage === "question-listening") return "stage1";
+      return "dashboard";
+    };
+  
+    const activeStage = getActiveStage();
   return (
     <nav className="w-full z-50  bg-opacity-80 backdrop-blur-xl border-b border-cyan-400/20 shadow-lg rounded-t-3xl">
       <div className="max-w-10xl mx-auto flex justify-between items-center px-8 py-5 space-x-10">

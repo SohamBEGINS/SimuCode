@@ -2,7 +2,8 @@ import { SignIn, useUser } from "@clerk/clerk-react";
 import { Navigate } from "react-router-dom";
 import BeamBackground from "@/components/BeamBackground";
 
-export default function SignInPage() {
+export default function SignInPage() 
+{
   const { isSignedIn } = useUser();
   if (isSignedIn) {
     return <Navigate to="/dashboard" />;
