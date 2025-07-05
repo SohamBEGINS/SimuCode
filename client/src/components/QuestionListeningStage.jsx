@@ -132,7 +132,7 @@ export default function QuestionListeningStage({ difficulty, onComplete, onBack 
       {/* Audio Controls */}
       <div className="flex flex-col items-center gap-4">
         <div className="text-cyan-200 text-lg font-mono">
-          🎧 Listen to the question:
+           Listen to the question:
         </div>
         
         <div className="flex gap-4 items-center">

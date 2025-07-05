@@ -96,6 +96,14 @@ export default function Dashboard() {
     setDifficulty(selectedDifficulty);
     setCurrentStage("question-listening");
     setInterviewStarted(true);
+     // NEW: Add Stage 1 to unlocked stages
+  setUnlockedStages(prev => {
+    if (!prev.includes("stage1")) {
+      return [...prev, "stage1"];
+    }
+    return prev;
+  });
+
   };
 
   const handleQuestionComplete = (result) => {
