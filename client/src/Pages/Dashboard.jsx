@@ -108,12 +108,21 @@ export default function Dashboard() {
 
   const handleQuestionComplete = (result) => {
     console.log("Question completed:", result);
-    // TODO: Add semantic similarity scoring here
-    // For now, just show success and move to next stage
-    alert("Question submitted! (Scoring will be implemented next)");
-    // You can add logic here to move to Stage 2
+    
+    if (result.passed) {
+      // Unlock Stage 2
+      setUnlockedStages(prev => {
+        if (!prev.includes("stage2")) {
+          return [...prev, "stage2"];
+        }
+        return prev;
+      });
+      
+      // Move to next stage or show success
+      alert(`Congratulations! You scored ${result.score}% and passed Stage 1!`);
+      // TODO: Move to Stage 2
+    }
   };
-
   
 
   const getStageContent = () => {

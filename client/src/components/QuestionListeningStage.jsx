@@ -10,6 +10,8 @@ export default function QuestionListeningStage({ difficulty, onComplete, onBack 
   const [isPlaying, setIsPlaying] = useState(false);
   const [error, setError] = useState(null);
   const audioRef = useRef(null);
+  const [scoring,setScoring] = useState(false);
+  const [scoreResult,setScoreResult] = useState(null);
 
   // Fetch question and generate TTS when component mounts
   useEffect(() => {
@@ -58,17 +60,58 @@ export default function QuestionListeningStage({ difficulty, onComplete, onBack 
     setIsPlaying(false);
   };
 
-  const handleSubmit = () => {
-    if (userInput.trim()) {
-      // For now, just pass the user input to parent
-      // Later we'll add semantic similarity scoring
-      onComplete({
-        originalQuestion: question,
-        userInput: userInput.trim(),
-        difficulty
-      });
-    }
-  };
+  const handleSubmit = async () => {
+    if (!userInput.trim()) return;
+
+    setScoring(true);
+
+    try{
+        const response = await fetch('http://localhost:5000/api/questions/score', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              original: question,
+              userInput: userInput.trim(),
+              difficulty
+    
+         })
+        })
+        const result = await response.json();
+    
+        if (!response.ok) {
+          throw new Error(result.error || 'Scoring failed');
+        }
+    
+        setScoreResult(result);
+        
+        if (result.passed) {
+          // User passed - move to next stage
+          onComplete({
+            originalQuestion: question,
+            userInput: userInput.trim(),
+            difficulty,
+            score: result.score,
+            passed: true
+          });
+        } else {
+          // User failed - show retry option
+          console.log('User failed threshold:', result);
+        }
+
+  }
+  catch(error)
+  {
+    console.error('error in calculating score',error.message);
+    setError('Failed to score your answer. Please try again');
+  }
+  finally{
+    setScoring(false);
+  }
+
+}
+  
 
   const handleRetry = () => {
     setUserInput("");
@@ -102,13 +145,7 @@ export default function QuestionListeningStage({ difficulty, onComplete, onBack 
           >
             Try Again
           </Button>
-          <Button 
-            onClick={onBack}
-            variant="outline"
-            className="border-cyan-400 text-cyan-400 hover:bg-cyan-400/10"
-          >
-            Go Back
-          </Button>
+        
         </div>
       </div>
     );
@@ -193,7 +230,7 @@ export default function QuestionListeningStage({ difficulty, onComplete, onBack 
       <div className="flex gap-4">
         <Button
           onClick={handleSubmit}
-          disabled={!userInput.trim()}
+          disabled={!userInput.trim() || scoring}
           className={cn(
             "px-8 py-3 text-lg font-bold font-mono",
             "bg-gradient-to-r from-green-600 to-emerald-600",
@@ -201,11 +238,59 @@ export default function QuestionListeningStage({ difficulty, onComplete, onBack 
             "disabled:opacity-50 disabled:cursor-not-allowed"
           )}
         >
-          Submit Answer
+          {scoring ? "Analyzing..." : "Submit Answer"}
         </Button>
-        
-        
-      </div>
+        </div>
+
+  
+       {/* Scoring Loading State */}
+{scoring && (
+  <div className="text-center py-4">
+    <div className="animate-spin h-8 w-8 text-cyan-400 mb-2 mx-auto">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
+      </svg>
+    </div>
+    <p className="text-cyan-300 text-sm">Analyzing your answer...</p>
+  </div>
+)}
+
+       {/* Score Display UI */}
+{scoreResult && !scoreResult.passed && (
+  <div className="text-center p-4 bg-red-900/20 border border-red-400/30 rounded-lg">
+    <div className="text-red-400 text-lg font-bold mb-2">
+      Score: {scoreResult.score}%
+    </div>
+    <div className="text-red-300 text-sm mb-4">
+      {scoreResult.feedback}
+    </div>
+    <div className="flex gap-4 justify-center">
+      <Button
+        onClick={() => {
+          setUserInput("");
+          setScoreResult(null);
+        }}
+        className="bg-red-600 hover:bg-red-700"
+      >
+        Try Again
+      </Button>
+      <Button
+        onClick={() => {
+          setUserInput("");
+          setScoreResult(null);
+          fetchQuestion(); // Get a new question
+        }}
+        variant="outline"
+        className="border-cyan-400 text-cyan-400 hover:bg-cyan-400/10"
+      >
+        New Question
+      </Button>
+    </div>
+  </div>
+)}
+
+
 
       {/* Instructions */}
       <div className="text-center text-cyan-200/70 text-sm font-mono max-w-md">
