@@ -109,6 +109,11 @@ export default function Dashboard() {
   const handleQuestionComplete = (result) => {
     console.log("Question completed:", result);
     
+     // Store stage data for later use (you can use localStorage or state)
+    const stageResults = JSON.parse(localStorage.getItem('stageResults') || '[]');
+    stageResults.push(result.stageData);
+     localStorage.setItem('stageResults', JSON.stringify(stageResults));
+
     if (result.passed) {
       // Unlock Stage 2
       setUnlockedStages(prev => {
@@ -119,7 +124,7 @@ export default function Dashboard() {
       });
       
       // Move to next stage or show success
-      alert(`Congratulations! You scored ${result.score}% and passed Stage 1!`);
+    alert("Great job! You understood the question correctly. Moving to Stage 2...");
       // TODO: Move to Stage 2
     }
   };
@@ -163,6 +168,8 @@ export default function Dashboard() {
         return "Interview Setup";
     }
   };
+
+
 
   return (
     <>

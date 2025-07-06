@@ -71,45 +71,49 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 });
 
-async function calculateSemanticSimilarity(text1,text2)
+//AI AGENT FOR SCORING 
+async function evaluateWithAI(originalQuestion , userInput)
 {
-  try{
-    const[embedding1,embedding2] = await Promise.all([
-      openai.embeddings.create({
-        model:"text-embedding-ada-002",
-        input:text1,
-      }),
-      openai.embeddings.create({
-        model:"text-embedding-ada-002",
-        input:text2,
-      }),
+  const prompt = `
+  You are an expert coding interview evaluator. Your task is simple and is used to evaluate whether a user has understood the question or not:
 
-    ]);
-    const vector1 = embedding1.data[0].embedding;
-    const vector2 = embedding2.data[0].embedding;
+ORIGINAL QUESTION: "${originalQuestion}"
+USER'S ANSWER: "${userInput}"
 
-     const similarity = cosineSimilarity(vector1,vector2);
-     return similarity;
+Determine if the user understood the question correctly. Consider:
+1. Did they capture the main problem/requirement?
+2. Did they understand the key constraints/conditions if any stated in the question?
+3. Is their paraphrase accurate and complete?
 
-    }
-    catch(error)
+Respond ONLY with:
+- "PASS" if they understood the question correctly
+- "FAIL" if they misunderstood or missed key elements
+
+No explanations, no scores, just PASS or FAIL.
+`
+
+
+try{
+  const response = await openai.chat.completions.create(
     {
-      console.log('OpenAI api error :' , error);
-      throw new Error('Failed to calculate similarity');
+      model:"gpt-4o-mini",
+      messages: [{ role: "user", content: prompt }],
+      temperature: 0.1, // Low temperature for consistent results
+      max_tokens: 10
     }
+  );
+
+  
+  const result = response.choices[0].message.content.trim().toUpperCase();
+  return result === "PASS";
+}
+catch(error){
+  console.error('AI evaluation error:', error);
+    throw new Error('AI evaluation failed');
+}
 }
 
-//cosine similarity function
-function cosineSimilarity(vecA,vecB)
-{
-  const dotProduct = vecA.reduce((sum,a,idx)=>sum+a*vecB[idx],0);
-  const normA = Math.sqrt(vecA.reduce((sum,a,idx)=>sum+a*a,0));
-  const normB = Math.sqrt(vecB.reduce((sum,b,idx)=>sum+b*b,0));
-  return dotProduct/(normA*normB) ;
-}
-
-
-//scoring endpoint
+//scoring endpoint 
 exports.scoreUserInput = async (req, res) => {
   const { original, userInput, difficulty } = req.body;
   
@@ -120,35 +124,37 @@ exports.scoreUserInput = async (req, res) => {
   }
 
   try {
-    // Calculate semantic similarity
-    const similarity = await calculateSemanticSimilarity(original, userInput);
-    const score = Math.round(similarity * 100); // Convert to percentage
-
-    // Determine threshold based on difficulty
-    const thresholds = {
-      easy: 80,
-      medium: 70,
-      hard: 60
-    };
+    // Basic validation
+    const trimmedInput = userInput.trim();
     
-    const threshold = thresholds[difficulty];
-    const passed = score >= threshold;
+    // AI evaluation
+    const passed = await evaluateWithAI(original, trimmedInput, difficulty);
+    
+    // Store stage data for later use
+    const stageData = {
+      stage: 1,
+      originalQuestion: original,
+      userInput: trimmedInput,
+      difficulty,
+      passed,
+      timestamp: new Date().toISOString(),
+      feedback: passed 
+        ? "You understood the question correctly!"
+        : "You need to listen more carefully and understand the question better."
+    };
 
-    console.log(`Scoring result: ${score}% (threshold: ${threshold}%, passed: ${passed})`);
+    console.log(`Stage 1 AI Result: ${passed ? 'PASS' : 'FAIL'} for ${difficulty} difficulty`);
 
     res.json({
-      score,
-      threshold,
       passed,
-      feedback: passed 
-        ? "Great job! You understood the question well."
-        : `Try again. You need ${threshold}% accuracy. Current score: ${score}%`
+      feedback: stageData.feedback,
+      stageData // This will be stored for summary stage
     });
 
   } catch (error) {
     console.error('Scoring error:', error);
     res.status(500).json({ 
-      error: 'Failed to score user input',
+      error: 'Failed to evaluate your answer',
       details: error.message 
     });
   }

@@ -11,6 +11,8 @@ export default function QuestionListeningStage({ difficulty, onComplete, onBack 
   const [error, setError] = useState(null);
   const audioRef = useRef(null);
   const [scoring,setScoring] = useState(false);
+  const [audioLoading, setAudioLoading] = useState(false); // NEW: Audio loading state
+  const [audioReady, setAudioReady] = useState(false); // NEW: Audio ready state
   const [scoreResult,setScoreResult] = useState(null);
 
   // Fetch question and generate TTS when component mounts
@@ -18,9 +20,24 @@ export default function QuestionListeningStage({ difficulty, onComplete, onBack 
     fetchQuestion();
   }, [difficulty]);
 
+  // Debug state changes
+  useEffect(() => {
+    console.log('Audio states:', { audioReady, audioLoading, isPlaying, audio: !!audio });
+  }, [audioReady, audioLoading, isPlaying, audio]);
+
+    //  Cleanup audio URL on unmount
+    useEffect(() => {
+      return () => {
+        if (audio) {
+          URL.revokeObjectURL(audio);
+        }
+      };
+    }, [audio]);  
+
   const fetchQuestion = async () => {
     setLoading(true);
     setError(null);
+    setAudioReady(false); // Reset audio state
     
     try {
       const response = await fetch(`http://localhost:5000/api/questions?difficulty=${difficulty}`);
@@ -34,12 +51,28 @@ export default function QuestionListeningStage({ difficulty, onComplete, onBack 
       
       // Convert base64 audio to blob and create audio URL
       if (data.audio) {
+        setAudioLoading(true);
         const audioBlob = new Blob(
           [Uint8Array.from(atob(data.audio), c => c.charCodeAt(0))],
           { type: data.format }
         );
         const audioUrl = URL.createObjectURL(audioBlob);
         setAudio(audioUrl);
+
+        try {
+          // Preload audio
+          await preloadAudio(audioUrl);
+          setAudioReady(true);
+          console.log('Audio ready set to true');
+        } catch (error) {
+          console.error('Audio preload failed:', error);
+          setError('Failed to load audio. Please try again.');
+        } finally {
+          setAudioLoading(false);
+          console.log('Audio loading set to false');
+        }
+      } else {
+        setAudioLoading(false);
       }
     } catch (err) {
       console.error('Error fetching question:', err);
@@ -48,16 +81,80 @@ export default function QuestionListeningStage({ difficulty, onComplete, onBack 
       setLoading(false);
     }
   };
+  
+  // NEW: Preload audio function
+  const preloadAudio = (audioUrl) => {
+    return new Promise((resolve, reject) => {
+      const audio = new Audio();
+      
+      audio.addEventListener('canplaythrough', () => {
+        console.log('Audio preloaded successfully');
+        resolve();
+      });
+      
+      audio.addEventListener('error', (e) => {
+        console.error('Audio preload error:', e);
+        reject(new Error('Audio preload failed'));
+      });
+      
+      audio.addEventListener('loadeddata', () => {
+        console.log('Audio data loaded');
+      });
+      
+      audio.src = audioUrl;
+      audio.load(); // Explicitly load the audio
+      
+      // Fallback timeout in case canplaythrough doesn't fire
+      setTimeout(() => {
+        console.log('Audio preload timeout fallback');
+        resolve();
+      }, 3000);
+    });
+  };
 
-  const playAudio = () => {
-    if (audioRef.current) {
-      audioRef.current.play();
+
+  // ENHANCED: Play audio with better error handling
+  const playAudio = async () => {
+    if (!audioRef.current || !audioReady) {
+      console.log('Audio not ready');
+      return;
+    }
+
+    try {
       setIsPlaying(true);
+      
+      // Reset audio to beginning
+      audioRef.current.currentTime = 0;
+      
+      const playPromise = audioRef.current.play();
+      
+      if (playPromise !== undefined) {
+        await playPromise;
+        console.log('Audio started playing');
+      }
+    } catch (error) {
+      console.error('Audio play error:', error);
+      setIsPlaying(false);
+      setError('Failed to play audio. Please try again.');
     }
   };
 
   const handleAudioEnded = () => {
     setIsPlaying(false);
+  };
+
+  const handleAudioError = (e) => {
+    console.error('Audio element error:', e);
+    setIsPlaying(false);
+    setError('Audio playback error. Please try again.');
+  };
+
+  const handleAudioLoadStart = () => {
+    console.log('Audio loading started');
+  };
+
+  const handleAudioCanPlay = () => {
+    console.log('Audio can play');
   };
 
   const handleSubmit = async () => {
@@ -84,33 +181,29 @@ export default function QuestionListeningStage({ difficulty, onComplete, onBack 
           throw new Error(result.error || 'Scoring failed');
         }
     
-        setScoreResult(result);
-        
-        if (result.passed) {
-          // User passed - move to next stage
-          onComplete({
-            originalQuestion: question,
-            userInput: userInput.trim(),
-            difficulty,
-            score: result.score,
-            passed: true
-          });
-        } else {
-          // User failed - show retry option
-          console.log('User failed threshold:', result);
-        }
+         const stageData = result.stageData;
 
-  }
-  catch(error)
-  {
-    console.error('error in calculating score',error.message);
-    setError('Failed to score your answer. Please try again');
-  }
-  finally{
+    if (result.passed) {
+      // User passed - move to next stage
+      onComplete({
+        stageData,
+        passed: true
+      });
+    } else {
+      // User failed - show retry option
+      setScoreResult({
+        passed: false,
+        feedback: result.feedback
+      });
+    }
+
+  } catch (error) {
+    console.error('Evaluation error:', error);
+    setError('Failed to evaluate your answer. Please try again.');
+  } finally {
     setScoring(false);
   }
-
-}
+};
   
 
   const handleRetry = () => {
@@ -175,7 +268,7 @@ export default function QuestionListeningStage({ difficulty, onComplete, onBack 
         <div className="flex gap-4 items-center">
           <Button
             onClick={playAudio}
-            disabled={!audio || isPlaying}
+            disabled={!audioReady || isPlaying || audioLoading}
             className={cn(
               "px-6 py-3 font-mono",
               "bg-gradient-to-r from-cyan-600 to-blue-600",
@@ -183,12 +276,12 @@ export default function QuestionListeningStage({ difficulty, onComplete, onBack 
               "disabled:opacity-50 disabled:cursor-not-allowed"
             )}
           >
-            {isPlaying ? "Playing..." : "▶️ Play Question"}
+            {audioLoading ? "Loading..." : isPlaying ? "Playing..." : "▶️ Play Question"}
           </Button>
           
           <Button
       onClick={playAudio}
-      disabled={!audio || isPlaying}
+      disabled={!audioReady || isPlaying || audioLoading}
       variant="outline"
       className="border-cyan-400 text-cyan-400 hover:bg-cyan-400/10 font-mono"
     >
@@ -202,7 +295,10 @@ export default function QuestionListeningStage({ difficulty, onComplete, onBack 
             ref={audioRef}
             src={audio}
             onEnded={handleAudioEnded}
-            onError={() => setIsPlaying(false)}
+            onError={handleAudioError}
+            onLoadStart={handleAudioLoadStart}
+            onCanPlay={handleAudioCanPlay}
+            preload="auto"
           />
         )}
       </div>
@@ -256,11 +352,11 @@ export default function QuestionListeningStage({ difficulty, onComplete, onBack 
   </div>
 )}
 
-       {/* Score Display UI */}
+ {/* Simple Result Display */}
 {scoreResult && !scoreResult.passed && (
   <div className="text-center p-4 bg-red-900/20 border border-red-400/30 rounded-lg">
     <div className="text-red-400 text-lg font-bold mb-2">
-      Score: {scoreResult.score}%
+      ❌ Try Again
     </div>
     <div className="text-red-300 text-sm mb-4">
       {scoreResult.feedback}
@@ -275,17 +371,7 @@ export default function QuestionListeningStage({ difficulty, onComplete, onBack 
       >
         Try Again
       </Button>
-      <Button
-        onClick={() => {
-          setUserInput("");
-          setScoreResult(null);
-          fetchQuestion(); // Get a new question
-        }}
-        variant="outline"
-        className="border-cyan-400 text-cyan-400 hover:bg-cyan-400/10"
-      >
-        New Question
-      </Button>
+  
     </div>
   </div>
 )}
