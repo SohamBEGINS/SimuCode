@@ -72,12 +72,51 @@ const openai = new OpenAI({
 });
 
 //AI AGENT FOR SCORING 
-async function evaluateWithAI(originalQuestion , userInput)
-{
-  const prompt = `
-  You are an expert coding interview evaluator. Your task is simple and is used to evaluate whether a user has understood the question or not:
 
-ORIGINAL QUESTION: "${originalQuestion}"
+
+// Second AI agent for evaluating the AI's response context
+async function evaluateAIResponseContext(aiResponse) {
+  const prompt = `
+You are an expert assistant. Analyze the following AI response to a user in a coding interview simulation:
+
+AI RESPONSE: "${aiResponse}"
+
+Determine if the response is positive and encouraging, indicating the user can proceed, or negative, indicating the user should retry. Respond ONLY with:
+- "POSITIVE" if the response is supportive and the user can move to the next stage
+- "NEGATIVE" if the response is critical or suggests the user should retry
+No explanations, just POSITIVE or NEGATIVE.`;
+
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [{ role: "user", content: prompt }],
+      temperature: 0.1,
+      max_tokens: 10
+    });
+    const result = response.choices[0].message.content.trim().toUpperCase();
+    return result === "POSITIVE" ? "positive" : "negative";
+  } catch (error) {
+    console.error('AI context evaluation error:', error);
+    throw new Error('AI context evaluation failed');
+  }
+}
+
+// New chat-based scoring endpoint
+exports.scoreUserInput = async (req, res) => {
+  const { original, userInput, difficulty } = req.body;
+  if (!original || !userInput || !difficulty) {
+    return res.status(400).json({
+      error: 'Missing required fields: original, userInput, difficulty'
+    });
+  }
+  try {
+    // User message
+    const userMessage = userInput.trim();
+    // AI response (simulate chat)
+    const aiPrompt = `
+    You are an expert coding interview evaluator. Your task is simple and is used to evaluate whether a user has understood the question or not:
+
+ORIGINAL QUESTION: "${original}"
 USER'S ANSWER: "${userInput}"
 
 Determine if the user understood the question correctly. Consider:
@@ -85,77 +124,33 @@ Determine if the user understood the question correctly. Consider:
 2. Did they understand the key constraints/conditions if any stated in the question?
 3. Is their paraphrase accurate and complete?
 
-Respond ONLY with:
-- "PASS" if they understood the question correctly
-- "FAIL" if they misunderstood or missed key elements
-
-No explanations, no scores, just PASS or FAIL.
-`
+Respond accordingly . If the user correctly understoods the question or the jist of the question , compliment him and if he fails tell him  to hear the question
+once again and nothing else , dont try to help him out. Try to respond in a minimum way possible , don't suggest any extra tips or feedbacks if he gets the question correct"`;
 
 
-try{
-  const response = await openai.chat.completions.create(
-    {
-      model:"gpt-4o-mini",
-      messages: [{ role: "user", content: prompt }],
-      temperature: 0.1, // Low temperature for consistent results
-      max_tokens: 10
-    }
-  );
-
-  
-  const result = response.choices[0].message.content.trim().toUpperCase();
-  return result === "PASS";
-}
-catch(error){
-  console.error('AI evaluation error:', error);
-    throw new Error('AI evaluation failed');
-}
-}
-
-//scoring endpoint 
-exports.scoreUserInput = async (req, res) => {
-  const { original, userInput, difficulty } = req.body;
-  
-  if (!original || !userInput || !difficulty) {
-    return res.status(400).json({ 
-      error: 'Missing required fields: original, userInput, difficulty' 
+    const aiResponseObj = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [{ role: "user", content: aiPrompt }],
+      temperature: 0.5,
+      max_tokens: 200
     });
-  }
-
-  try {
-    // Basic validation
-    const trimmedInput = userInput.trim();
-    
-    // AI evaluation
-    const passed = await evaluateWithAI(original, trimmedInput, difficulty);
-    
-    // Store stage data for later use
-    const stageData = {
-      stage: 1,
-      originalQuestion: original,
-      userInput: trimmedInput,
-      difficulty,
-      passed,
-      timestamp: new Date().toISOString(),
-      feedback: passed 
-        ? "You understood the question correctly!"
-        : "You need to listen more carefully and understand the question better."
-    };
-
-    console.log(`Stage 1 AI Result: ${passed ? 'PASS' : 'FAIL'} for ${difficulty} difficulty`);
-
+    const aiResponse = aiResponseObj.choices[0].message.content.trim();
+    // Second AI evaluates the AI's response context
+    const evaluation = await evaluateAIResponseContext(aiResponse);
+    // Build chat history
+    const chat = [
+      { sender: "user", message: userMessage },
+      { sender: "ai", message: aiResponse }
+    ];
     res.json({
-      passed,
-      feedback: stageData.feedback,
-      stageData // This will be stored for summary stage
+      chat,
+      evaluation // "positive" or "negative"
     });
-
   } catch (error) {
-    console.error('Scoring error:', error);
-    res.status(500).json({ 
-      error: 'Failed to evaluate your answer',
-      details: error.message 
+    console.error('Chat scoring error:', error);
+    res.status(500).json({
+      error: 'Failed to process chat and evaluation',
+      details: error.message
     });
   }
 };

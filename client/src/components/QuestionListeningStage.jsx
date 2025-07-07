@@ -14,6 +14,10 @@ export default function QuestionListeningStage({ difficulty, onComplete, onBack 
   const [audioLoading, setAudioLoading] = useState(false); // NEW: Audio loading state
   const [audioReady, setAudioReady] = useState(false); // NEW: Audio ready state
   const [scoreResult,setScoreResult] = useState(null);
+  const [chat, setChat] = useState([]); // NEW: Chat history
+  const [evaluation, setEvaluation] = useState(null); // NEW: Evaluation result
+  // Add a ref to scroll chat to bottom
+  const chatEndRef = useRef(null);
 
   // Fetch question and generate TTS when component mounts
   useEffect(() => {
@@ -159,51 +163,50 @@ export default function QuestionListeningStage({ difficulty, onComplete, onBack 
 
   const handleSubmit = async () => {
     if (!userInput.trim()) return;
-
     setScoring(true);
-
-    try{
-        const response = await fetch('http://localhost:5000/api/questions/score', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              original: question,
-              userInput: userInput.trim(),
-              difficulty
-    
-         })
+    setEvaluation(null); // Reset evaluation
+    // Add user message to chat
+    setChat(prev => [...prev, { sender: "user", message: userInput.trim() }]);
+    try {
+      const response = await fetch('http://localhost:5000/api/questions/score', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          original: question,
+          userInput: userInput.trim(),
+          difficulty
         })
-        const result = await response.json();
-    
-        if (!response.ok) {
-          throw new Error(result.error || 'Scoring failed');
-        }
-    
-         const stageData = result.stageData;
-
-    if (result.passed) {
-      // User passed - move to next stage
-      onComplete({
-        stageData,
-        passed: true
       });
-    } else {
-      // User failed - show retry option
-      setScoreResult({
-        passed: false,
-        feedback: result.feedback
-      });
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result.error || 'Scoring failed');
+      }
+      // Update chat with AI response
+      setChat(result.chat);
+      setEvaluation(result.evaluation); // "positive" or "negative"
+      setScoreResult(null); // Clear old result
+      if (result.evaluation === "positive") {
+        // User can proceed
+        onComplete({
+          chat: result.chat,
+          evaluation: result.evaluation
+        });
+      } else {
+        // User must retry
+        setScoreResult({
+          passed: false,
+          feedback: "Please try again. The AI suggests you need to improve your answer."
+        });
+      }
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setScoring(false);
+      setUserInput("");
     }
-
-  } catch (error) {
-    console.error('Evaluation error:', error);
-    setError('Failed to evaluate your answer. Please try again.');
-  } finally {
-    setScoring(false);
-  }
-};
+  };
   
 
   const handleRetry = () => {
@@ -211,6 +214,13 @@ export default function QuestionListeningStage({ difficulty, onComplete, onBack 
     setError(null);
     fetchQuestion();
   };
+
+  // Add a ref to scroll chat to bottom
+  useEffect(() => {
+    if (chatEndRef.current) {
+      chatEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [chat, scoring]);
 
   if (loading) {
     return (
@@ -245,7 +255,7 @@ export default function QuestionListeningStage({ difficulty, onComplete, onBack 
   }
 
   return (
-    <div className="w-full h-full flex flex-col items-center justify-center gap-8 p-6">
+    <div className="w-full h-full flex flex-col items-center justify-center gap-4 p-4">
       {/* Header */}
       <div className="text-center">
         <h2 className={cn(
@@ -303,80 +313,66 @@ export default function QuestionListeningStage({ difficulty, onComplete, onBack 
         )}
       </div>
 
-      {/* User Input */}
-      <div className="w-full max-w-2xl">
-        <label className="block text-cyan-300 text-lg font-mono mb-3">
-          Type what you heard:
-        </label>
-        <textarea
-          value={userInput}
-          onChange={(e) => setUserInput(e.target.value)}
-          placeholder="Type the question as you heard it..."
-          className={cn(
-            "w-full h-32 p-4 rounded-lg font-mono text-base",
-            "bg-black/50 border-2 border-cyan-400/30",
-            "text-cyan-100 placeholder-cyan-300/50",
-            "focus:border-cyan-400 focus:outline-none",
-            "resize-none"
+      {/* Chat + Input Area */}
+      <div className="w-full max-w-2xl flex-1 flex flex-col bg-black/80 rounded-xl border border-cyan-400/20 shadow-inner overflow-hidden" style={{ minHeight: 0 }}>
+        {/* Chat Area */}
+        <div className="flex-1 overflow-y-auto px-4 py-4 flex flex-col gap-2" style={{ minHeight: 0 }}>
+          {chat.map((msg, idx) => (
+            <div key={idx} className={
+              msg.sender === "user"
+                ? "self-end bg-green-900 text-green-200 px-4 py-2 rounded-2xl max-w-[70%] shadow-md"
+                : "self-start bg-gray-800 text-cyan-200 px-4 py-2 rounded-2xl max-w-[70%] shadow-md"
+            }>
+              <span>{msg.message}</span>
+            </div>
+          ))}
+          {scoring && (
+            <div className="self-start text-cyan-400 italic animate-pulse">Interviewer is typing...</div>
           )}
-        />
+          <div ref={chatEndRef} />
+        </div>
+        {/* Input Area */}
+        <form
+          onSubmit={e => {
+            e.preventDefault();
+            handleSubmit();
+          }}
+          className="bg-black/90 border-t border-cyan-400/10 px-4 py-3 flex gap-2 items-end"
+        >
+          <textarea
+            value={userInput}
+            onChange={e => setUserInput(e.target.value)}
+            placeholder="Type your answer..."
+            className={cn(
+              "flex-1 min-h-[40px] max-h-32 resize-none rounded-lg font-mono text-base",
+              "bg-black/60 border border-cyan-400/20 text-cyan-100 placeholder-cyan-300/50",
+              "focus:border-cyan-400 focus:outline-none px-3 py-2"
+            )}
+            rows={1}
+            disabled={scoring}
+          />
+          <Button
+            type="submit"
+            disabled={!userInput.trim() || scoring}
+            className={cn(
+              "px-6 py-2 text-lg font-bold font-mono",
+              "bg-gradient-to-r from-green-600 to-emerald-600",
+              "hover:from-green-500 hover:to-emerald-500",
+              "disabled:opacity-50 disabled:cursor-not-allowed"
+            )}
+          >
+            {scoring ? "..." : "Send"}
+          </Button>
+        </form>
       </div>
 
-      {/* Submit Button */}
-      <div className="flex gap-4">
-        <Button
-          onClick={handleSubmit}
-          disabled={!userInput.trim() || scoring}
-          className={cn(
-            "px-8 py-3 text-lg font-bold font-mono",
-            "bg-gradient-to-r from-green-600 to-emerald-600",
-            "hover:from-green-500 hover:to-emerald-500",
-            "disabled:opacity-50 disabled:cursor-not-allowed"
-          )}
-        >
-          {scoring ? "Analyzing..." : "Submit Answer"}
-        </Button>
-        </div>
-
-  
-       {/* Scoring Loading State */}
-{scoring && (
-  <div className="text-center py-4">
-    <div className="animate-spin h-8 w-8 text-cyan-400 mb-2 mx-auto">
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
-      </svg>
-    </div>
-    <p className="text-cyan-300 text-sm">Analyzing your answer...</p>
-  </div>
-)}
-
- {/* Simple Result Display */}
-{scoreResult && !scoreResult.passed && (
-  <div className="text-center p-4 bg-red-900/20 border border-red-400/30 rounded-lg">
-    <div className="text-red-400 text-lg font-bold mb-2">
-      ❌ Try Again
-    </div>
-    <div className="text-red-300 text-sm mb-4">
-      {scoreResult.feedback}
-    </div>
-    <div className="flex gap-4 justify-center">
-      <Button
-        onClick={() => {
-          setUserInput("");
-          setScoreResult(null);
-        }}
-        className="bg-red-600 hover:bg-red-700"
-      >
-        Try Again
-      </Button>
-  
-    </div>
-  </div>
-)}
-
-
+      {/* Evaluation result */}
+      {evaluation === "positive" && (
+        <div className="mt-4 text-green-400 font-bold">Good job! You may proceed to the next stage.</div>
+      )}
+      {evaluation === "negative" && (
+        <div className="mt-4 text-red-400 font-bold">Please try again. The Interviewer suggests you need to improve your answer.</div>
+      )}
 
       {/* Instructions */}
       <div className="text-center text-cyan-200/70 text-sm font-mono max-w-md">
