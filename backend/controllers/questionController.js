@@ -124,8 +124,8 @@ Determine if the user understood the question correctly. Consider:
 2. Did they understand the key constraints/conditions if any stated in the question?
 3. Is their paraphrase accurate and complete?
 
-Respond accordingly . If the user correctly understoods the question or the jist of the question , compliment him and if he fails tell him  to hear the question
-once again and nothing else , dont try to help him out. Try to respond in a minimum way possible , don't suggest any extra tips or feedbacks if he gets the question correct"`;
+Respond accordingly . If the user correctly understoods the question or the jist of the question , 
+compliment him and if he fails tell him that he misses out something , but do not tell what he misses out. Try to respond in a minimum way possible , don't suggest any extra tips or feedbacks if he gets the question correct"`;
 
 
     const aiResponseObj = await openai.chat.completions.create({
@@ -154,3 +154,39 @@ once again and nothing else , dont try to help him out. Try to respond in a mini
     });
   }
 };
+
+// STAGE 2 
+
+exports.clarify = async(req,res) =>{
+  const { question, userMessage, history, difficulty, clarificationsUsed } = req.body;
+
+  // Build the prompt for the LLM
+  const prompt = `
+You are a technical interviewer. The candidate is asking clarifying questions about the following coding problem:
+"${question}"
+
+Previous clarifications:
+${history.map(h => `${h.sender === 'user' ? 'Candidate' : 'Interviewer'}: ${h.message}`).join('\n')}
+
+Candidate's new question: "${userMessage}"
+
+Respond as a coding interviewer. Sometimes, push back with "What do you think?" or answer ambiguously to encourage deeper thinking. Otherwise, answer helpfully.
+`;
+
+  try {
+    // Directly call the LLM API (e.g., OpenAI)
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [{ role: "user", content: prompt }],
+      temperature: 0.1,
+      max_tokens: 10
+    });
+
+    const aiMessage = response.choices[0].message.content.trim();
+    res.json({ aiMessage });
+  } catch (error) {
+    console.error('LLM API error:', error.response?.data || error.message);
+    res.status(500).json({ aiMessage: "Sorry, there was an error generating the response." });
+  }
+
+}

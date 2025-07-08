@@ -168,7 +168,7 @@ export default function QuestionListeningStage({ difficulty, onComplete, onBack 
     // Add user message to chat
     setChat(prev => [...prev, { sender: "user", message: userInput.trim() }]);
     try {
-      const response = await fetch('http://localhost:5000/api/questions/score', {
+      const response = await fetch('/api/questions/score', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

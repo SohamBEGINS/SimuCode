@@ -9,6 +9,11 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+    }
+  },
+  server: {
+    proxy: {
+      '/api': 'http://localhost:5000', // Forward all /api requests to backend
     },
   },
 })
