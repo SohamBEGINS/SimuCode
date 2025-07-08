@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import TerminalShell from "@/components/TerminalShell";
 import DifficultySelection from "@/components/DifficultySelection";
 import QuestionListeningStage from "@/components/QuestionListeningStage";
+import ClarificationStage from "@/components/ClarificationStage"; // Added ClarificationStage import
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
@@ -47,7 +48,9 @@ export default function Dashboard() {
   const { user, isSignedIn, isLoaded } = useUser();
   const [unlockedStages, setUnlockedStages] = useState(["dashboard"]);
   const [difficulty, setDifficulty] = useState(null);
-  const [currentStage, setCurrentStage] = useState("difficulty-selection"); // "difficulty-selection" | "question-listening"
+  const [currentStage, setCurrentStage] = useState("difficulty-selection");
+  const [showLoader, setShowLoader] = useState(false); // Add loader state
+  const [stage1Question, setStage1Question] = useState(""); // Store question for Stage 2
   const [interviewStarted, setInterviewStarted] = useState(false);
   // Add some debugging
   console.log("Dashboard loading state:", { isLoaded, isSignedIn, user });
@@ -106,6 +109,8 @@ export default function Dashboard() {
 
   };
 
+  
+
   const handleQuestionComplete = (result) => {
     console.log("Question completed:", result);
     
@@ -114,23 +119,46 @@ export default function Dashboard() {
     stageResults.push(result.stageData);
      localStorage.setItem('stageResults', JSON.stringify(stageResults));
 
-    if (result.passed) {
-      // Unlock Stage 2
+    if (result.evaluation === "positive") {
       setUnlockedStages(prev => {
         if (!prev.includes("stage2")) {
           return [...prev, "stage2"];
         }
         return prev;
       });
-      
-      // Move to next stage or show success
-    alert("Great job! You understood the question correctly. Moving to Stage 2...");
-      // TODO: Move to Stage 2
+      // Save the question for Stage 2 (from the first user message in chat)
+      const userQuestion = result.chat && result.chat.length > 0 ? result.chat[0].message : "";
+      setStage1Question(userQuestion);
+      // Wait for 2.5 seconds so user can read the feedback in the chat
+      setTimeout(() => {
+        setShowLoader(true);
+        setTimeout(() => {
+          setShowLoader(false);
+          setCurrentStage("clarification");
+        }, 1500); // 1.5 seconds loader/transition
+      }, 5500); // 2.5 seconds to let user read feedback
     }
   };
-  
+
+  const handleProceedToStage3 = () => {
+    // setCurrentStage("stage3");
+    // ...your logic for next stage
+  };
 
   const getStageContent = () => {
+    if (showLoader) {
+      return (
+        <div className="text-center py-12">
+          <div className="animate-spin h-12 w-12 text-cyan-400 mb-4 mx-auto">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
+            </svg>
+          </div>
+          <p className="text-cyan-300 text-lg">Preparing next stage...</p>
+        </div>
+      );
+    }
     switch (currentStage) {
       case "difficulty-selection":
         return <DifficultySelection onSelect={handleDifficultySelect} />;
@@ -140,6 +168,14 @@ export default function Dashboard() {
             difficulty={difficulty}
             onComplete={handleQuestionComplete}
             onBack={null}
+          />
+        );
+      case "clarification":
+        return (
+          <ClarificationStage
+            question={stage1Question}
+            difficulty={difficulty}
+            onProceed={handleProceedToStage3}
           />
         );
       default:
@@ -153,6 +189,8 @@ export default function Dashboard() {
         return <span className="text-cyan-300 font-semibold">Step 1 of 5</span>;
       case "question-listening":
         return <span className="text-green-300 font-semibold">Step 2 of 5</span>;
+      case "clarification":
+        return <span className="text-green-300 font-semibold">Step 3 of 5</span>;
       default:
         return <span className="text-cyan-300 font-semibold">Step 1 of 5</span>;
     }
@@ -164,6 +202,8 @@ export default function Dashboard() {
         return "Interview Setup";
       case "question-listening":
         return "Question Listening Stage";
+      case "clarification":
+        return "Clarification Stage";
       default:
         return "Interview Setup";
     }

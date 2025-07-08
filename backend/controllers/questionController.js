@@ -179,7 +179,6 @@ Respond as a coding interviewer. Sometimes, push back with "What do you think?" 
       model: "gpt-4o-mini",
       messages: [{ role: "user", content: prompt }],
       temperature: 0.1,
-      max_tokens: 10
     });
 
     const aiMessage = response.choices[0].message.content.trim();
