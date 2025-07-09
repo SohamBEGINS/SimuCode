@@ -1,16 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
 
-const CLARIFICATION_LIMITS = { easy: 2, medium: 3, hard: 5 };
-
 export default function ClarificationStage({ question, difficulty, onProceed }) {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
-  const [clarificationsUsed, setClarificationsUsed] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const chatEndRef = useRef(null);
-
-  const clarificationLimit = CLARIFICATION_LIMITS[difficulty] || 2;
 
   // Scroll chat to bottom on new message
   useEffect(() => {
@@ -26,7 +21,6 @@ export default function ClarificationStage({ question, difficulty, onProceed }) 
 
     const userMsg = { sender: "user", message: input.trim() };
     setMessages((prev) => [...prev, userMsg]);
-    setClarificationsUsed((prev) => prev + 1);
     setInput("");
 
     try {
@@ -38,7 +32,6 @@ export default function ClarificationStage({ question, difficulty, onProceed }) 
           userMessage: userMsg.message,
           history: [...messages, userMsg],
           difficulty,
-          clarificationsUsed: clarificationsUsed + 1,
         }),
       });
 
@@ -69,7 +62,7 @@ export default function ClarificationStage({ question, difficulty, onProceed }) 
   const handleInputKeyDown = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      if (!loading && clarificationsUsed < clarificationLimit) {
+      if (!loading) {
         handleSend();
       }
     }
@@ -83,11 +76,7 @@ export default function ClarificationStage({ question, difficulty, onProceed }) 
           $ Stage 2: Clarification
         </h2>
         <p className="text-cyan-300/70 text-base font-mono mb-2">
-          Ask clarifying questions about the problem. You have{" "}
-          <span className="font-semibold text-cyan-200">
-            {clarificationLimit - clarificationsUsed}
-          </span>{" "}
-          left.
+          Ask clarifying questions about the problem. You can proceed at any time.
         </p>
         <div className="bg-black/70 border border-cyan-400/20 rounded-lg p-3 text-cyan-100 font-mono mb-2">
           <b>Question:</b> {question}
@@ -123,7 +112,7 @@ export default function ClarificationStage({ question, difficulty, onProceed }) 
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          if (!loading && clarificationsUsed < clarificationLimit) {
+          if (!loading) {
             handleSend();
           }
         }}
@@ -135,30 +124,29 @@ export default function ClarificationStage({ question, difficulty, onProceed }) 
           onKeyDown={handleInputKeyDown}
           placeholder="Ask a clarifying question..."
           className="flex-1 min-h-[40px] max-h-32 resize-none rounded-lg font-mono text-base bg-black/60 border border-cyan-400/20 text-cyan-100 placeholder-cyan-300/50 focus:border-cyan-400 focus:outline-none px-3 py-2"
-          disabled={clarificationsUsed >= clarificationLimit || loading}
+          disabled={loading}
         />
         <button
           type="submit"
-          disabled={
-            clarificationsUsed >= clarificationLimit ||
-            !input.trim() ||
-            loading
-          }
-          className="px-4 py-2 bg-cyan-600 text-white rounded-lg font-mono hover:bg-cyan-700 disabled:opacity-50"
+          disabled={!input.trim() || loading}
+          className="px-4 py-1 bg-transparent border border-cyan-400 text-cyan-200 rounded-md font-mono text-base hover:bg-cyan-900 hover:text-white transition shadow-none"
         >
           Send
         </button>
+        <div>
+        
+        </div>
       </form>
 
-      {/* Proceed Button */}
-      {clarificationsUsed >= clarificationLimit && (
-        <button
-          className="mt-4 px-6 py-3 bg-green-600 text-white rounded-full font-semibold text-lg shadow hover:bg-green-700 transition"
-          onClick={onProceed}
-        >
-          Proceed to Next Stage
-        </button>
-      )}
+      {/* Proceed Button - minimalist and terminal-compatible */}
+      <div className="flex justify-center mt-2">
+  <button
+    className="px-4 py-1 bg-transparent border border-cyan-400 text-cyan-200 rounded-md font-mono text-base hover:bg-cyan-900 hover:text-white transition shadow-none"
+    onClick={onProceed}
+  >
+    Proceed
+  </button>
+</div>  
 
       {/* Error Message */}
       {error && (

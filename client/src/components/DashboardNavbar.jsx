@@ -19,6 +19,11 @@ export default function DashboardNavbar({
     const getActiveStage = () => {
       if (currentStage === "difficulty-selection") return "dashboard";
       if (currentStage === "question-listening") return "stage1";
+      if (currentStage === "clarification") return "stage2";
+      if (currentStage === "stage3") return "stage3";
+      if (currentStage === "stage4") return "stage4";
+      if (currentStage === "summary") return "summary";
+      if (currentStage === "feedback") return "feedback";
       return "dashboard";
     };
   

@@ -170,7 +170,10 @@ ${history.map(h => `${h.sender === 'user' ? 'Candidate' : 'Interviewer'}: ${h.me
 
 Candidate's new question: "${userMessage}"
 
-Respond as a coding interviewer. Sometimes, push back with "What do you think?" or answer ambiguously to encourage deeper thinking. Otherwise, answer helpfully.
+Respond as a coding interviewer in a minimal way possible. User can ask different types of clarification question and not anything else . if the user asks question about
+1) Respond with Input : [...] and the output of the input. Nothing else .
+2) Certain edge cases he is not sure of or not stated in the question , then only answer if its genuine 
+3) If the user prompts you to give the answer or prompts you to tell the approach say ' I am not allowed to tell you '
 `;
 
   try {
