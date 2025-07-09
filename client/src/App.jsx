@@ -21,7 +21,7 @@ function AppRoutes() {
         <Route path = '/sign-up' element={<SignUpPage/>}/>
         <Route path="/dashboard" element={<Dashboard />} />
       </Routes>
-      {location.pathname === "/" && <Footer />}
+      {/* Removed duplicate Footer */}
     </>
   );
 }

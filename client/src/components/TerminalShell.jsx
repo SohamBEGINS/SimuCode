@@ -13,11 +13,11 @@ export default function TerminalShell({
     <Card
       className={cn(
         "w-full max-w-5xl mx-auto",
-        "bg-black/95 border border-green-400/30 shadow-2xl rounded-2xl animate-fade-in",
+        "bg-black/95 border border-cyan-400/30 shadow-2xl rounded-2xl animate-fade-in",
         "backdrop-blur-xl backdrop-saturate-150",
-        "shadow-[0_0_60px_-12px_rgba(34,197,94,0.4)]",
+        "shadow-[0_0_60px_-12px_rgba(34,211,238,0.4)]", // cyan shadow
         "before:absolute before:inset-0 before:rounded-2xl before:p-[1px]",
-        "before:bg-gradient-to-r before:from-green-400/20 before:via-emerald-400/20 before:to-cyan-400/20",
+        "before:bg-gradient-to-r before:from-cyan-400/20 before:via-blue-400/20 before:to-cyan-400/20",
         "before:mask-[linear-gradient(#fff_0_0)_content-box,linear-gradient(#fff_0_0)]",
         "before:mask-composite-[subtract] before:-z-10",
         "flex flex-col h-[70vh] font-mono",
@@ -29,17 +29,17 @@ export default function TerminalShell({
       <CardHeader className={cn(
         "flex flex-row items-center justify-between",
         "bg-gradient-to-r from-gray-800 via-gray-900 to-black",
-        "border-b border-green-400/20 px-6 py-3 rounded-t-2xl",
+        "border-b border-cyan-400/20 px-6 py-3 rounded-t-2xl",
         "backdrop-blur-sm"
       )}>
         <div className="flex items-center space-x-4">
           <div className="flex space-x-2">
             <div className="w-3 h-3 rounded-full bg-red-500 shadow-lg shadow-red-500/20"></div>
             <div className="w-3 h-3 rounded-full bg-yellow-500 shadow-lg shadow-yellow-500/20"></div>
-            <div className="w-3 h-3 rounded-full bg-green-500 shadow-lg shadow-green-500/20"></div>
+            <div className="w-3 h-3 rounded-full bg-cyan-400 shadow-lg shadow-cyan-400/20"></div>
           </div>
           <span className={cn(
-            "text-lg font-mono font-bold text-green-400",
+            "text-lg font-mono font-bold text-cyan-400",
             "drop-shadow-lg"
           )}>
             {title}
@@ -48,7 +48,7 @@ export default function TerminalShell({
         <div className="flex items-center gap-3">
           <div className={cn(
             "px-3 py-1 rounded-md text-sm border",
-            "bg-black/50 border-green-400/30 text-green-300",
+            "bg-black/50 border-cyan-400/30 text-cyan-300",
             "backdrop-blur-sm font-mono"
           )}>
             {progress}
@@ -63,7 +63,7 @@ export default function TerminalShell({
         <div className={cn(
           "relative h-full",
           "before:absolute before:inset-0 before:rounded-xl",
-          "before:bg-gradient-to-br before:from-green-400/5 before:to-emerald-400/5",
+          "before:bg-gradient-to-br before:from-cyan-400/5 before:to-blue-400/5",
           "before:blur-xl before:-z-10"
         )}>
           {children}
