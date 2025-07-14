@@ -7,7 +7,6 @@ export default function ApproachTable({ onSubmit, disabled, canProceed }) {
     spaceComplexity: ''
   });
   const [isProcessing, setIsProcessing] = useState(false);
-  const [success, setSuccess] = useState(false);
 
   const complexityOptions = [
     'O(1)', 'O(log n)', 'O(n)', 'O(n log n)', 'O(n²)', 'O(2ⁿ)', 'O(n!)'
@@ -24,18 +23,8 @@ export default function ApproachTable({ onSubmit, disabled, canProceed }) {
       return;
     }
     setIsProcessing(true);
-    const verdict = await onSubmit(currentApproach); // onSubmit should return verdict string
-    if (verdict === 'OPTIMAL' || verdict === 'SUBOPTIMAL') {
-      setSuccess(true);
-      setTimeout(() => {
-        setSuccess(false);
-        setCurrentApproach({ description: '', timeComplexity: '', spaceComplexity: '' });
-        setIsProcessing(false);
-      }, 1000);
-    } else {
-      setCurrentApproach({ description: '', timeComplexity: '', spaceComplexity: '' });
-      setIsProcessing(false);
-    }
+    await onSubmit(currentApproach); // verdict is not used for reset anymore
+    setIsProcessing(false);
   };
 
   const handleInputChange = (field, value) => {
@@ -52,12 +41,12 @@ export default function ApproachTable({ onSubmit, disabled, canProceed }) {
       </div>
       <div className="terminal-section-content">
         <form onSubmit={handleSubmit} className="new-approach-form relative">
-          <div className={`approach-header ${success ? 'bg-green-700/30' : ''}`}>
+          <div className="approach-header">
             <span className="text-cyan-400 font-mono">
               APPROACH:
             </span>
           </div>
-          <div className={`approach-content bg-black/30 border border-cyan-400/20 rounded-md p-3 transition-colors duration-500 ${success ? 'bg-green-900/40 border-green-400' : ''}`}>
+          <div className={`approach-content bg-black/30 border border-cyan-400/20 rounded-md p-3 transition-colors duration-500`}>
             <div className="mb-3">
               <label className="block text-sm font-medium mb-1 text-cyan-300">
                 Description:
@@ -68,7 +57,7 @@ export default function ApproachTable({ onSubmit, disabled, canProceed }) {
                 value={currentApproach.description}
                 onChange={(e) => handleInputChange('description', e.target.value)}
                 placeholder="Describe your approach to solve this problem..."
-                disabled={disabled || isProcessing || success}
+                disabled={disabled || isProcessing}
               />
             </div>
             <div className="flex gap-4">
@@ -80,7 +69,7 @@ export default function ApproachTable({ onSubmit, disabled, canProceed }) {
                   className="terminal-select w-full text-cyan-100 bg-black/70 border border-cyan-400/30 focus:border-cyan-400 focus:ring-cyan-400 rounded-md"
                   value={currentApproach.timeComplexity}
                   onChange={(e) => handleInputChange('timeComplexity', e.target.value)}
-                  disabled={disabled || isProcessing || success}
+                  disabled={disabled || isProcessing}
                 >
                   <option value="">Select complexity...</option>
                   {complexityOptions.map(option => (
@@ -96,7 +85,7 @@ export default function ApproachTable({ onSubmit, disabled, canProceed }) {
                   className="terminal-select w-full text-cyan-100 bg-black/70 border border-cyan-400/30 focus:border-cyan-400 focus:ring-cyan-400 rounded-md"
                   value={currentApproach.spaceComplexity}
                   onChange={(e) => handleInputChange('spaceComplexity', e.target.value)}
-                  disabled={disabled || isProcessing || success}
+                  disabled={disabled || isProcessing}
                 >
                   <option value="">Select complexity...</option>
                   {complexityOptions.map(option => (
@@ -109,7 +98,7 @@ export default function ApproachTable({ onSubmit, disabled, canProceed }) {
               <button
                 type="submit"
                 className="px-4 py-1 bg-transparent border border-cyan-400 text-cyan-200 rounded-md font-mono text-base hover:bg-cyan-900 hover:text-white transition shadow-none"
-                disabled={disabled || isProcessing || success}
+                disabled={disabled || isProcessing}
               >
                 SUBMIT APPROACH
               </button>

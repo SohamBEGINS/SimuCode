@@ -7,8 +7,7 @@ import { Button } from '@/components/ui/button';
 export default function Stage3ApproachAnalysis({ 
   question, 
   difficulty, 
-  onStageComplete,
-  sessionId 
+  onStageComplete
 }) {
   const [approaches, setApproaches] = useState([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -25,7 +24,6 @@ export default function Stage3ApproachAnalysis({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          sessionId,
           approach,
           question,
           difficulty
@@ -68,9 +66,9 @@ export default function Stage3ApproachAnalysis({
         {/* Left: Approach Table */}
         <div className="w-1/2 pr-2 border-r border-cyan-400/20">
           <ApproachTable
-            approaches={approaches}
             onSubmit={handleApproachSubmit}
             disabled={isAnalyzing}
+            canProceed={canProceed}
           />
         </div>
         
@@ -81,7 +79,6 @@ export default function Stage3ApproachAnalysis({
             feedback={feedback}
             suggestion={suggestion}
             canProceed={canProceed}
-            approaches={approaches}
           />
         </div>
       </div>

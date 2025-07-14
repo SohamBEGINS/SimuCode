@@ -71,35 +71,20 @@ const approachAgent = new Stage3ApproachAgent();
  * This is called when user submits an approach in the table.
  */
 exports.analyzeApproach = async (req, res) => {
-  const { sessionId, approach, question, difficulty } = req.body;
+  const { approach, question, difficulty } = req.body;
 
-  if (!sessionId || !approach || !question || !difficulty) {
+  if (!approach || !question || !difficulty) {
     return res.status(400).json({
-      error: 'Missing required fields: sessionId, approach, question, difficulty'
+      error: 'Missing required fields: approach, question, difficulty'
     });
   }
 
   try {
-    // Analyze the approach using the new agent method
+    // Analyze the approach using the agent method
     const analysis = await approachAgent.analyzeAndRespond(approach, question, difficulty);
 
-    // Initialize session if needed
-    if (!sessionData.has(sessionId)) {
-      sessionData.set(sessionId, { approaches: [], currentStage: 3 });
-    }
-    const session = sessionData.get(sessionId);
-
-    // Store the approach if it's optimal
-    if (analysis.verdict === "INCORRECT") {
-      session.approaches.push({
-        ...approach,
-        verdict: analysis.verdict,
-        feedback: analysis.feedback
-      });
-    }
-
-    // Check if user can proceed (at least one optimal approach)
-    const canProceed = session.approaches.some(a => a.verdict === "OPTIMAL" || a.verdict == "SUBOPTIMAL");
+    // Determine canProceed based on verdict
+    const canProceed = analysis.verdict === 'OPTIMAL' || analysis.verdict === 'SUBOPTIMAL';
 
     res.json({
       success: true,
