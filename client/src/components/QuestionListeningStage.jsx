@@ -289,14 +289,7 @@ export default function QuestionListeningStage({ difficulty, onComplete, onBack 
             {audioLoading ? "Loading..." : isPlaying ? "Playing..." : "▶️ Play Question"}
           </Button>
           
-          <Button
-      onClick={playAudio}
-      disabled={!audioReady || isPlaying || audioLoading}
-      variant="outline"
-      className="border-cyan-400 text-cyan-400 hover:bg-cyan-400/10 font-mono"
-    >
-      🔄 Replay
-    </Button>
+          
   </div>
         
         {/* Hidden audio element */}
@@ -316,7 +309,7 @@ export default function QuestionListeningStage({ difficulty, onComplete, onBack 
       {/* Chat + Input Area */}
       <div className="w-full max-w-2xl flex-1 flex flex-col bg-black/80 rounded-xl border border-cyan-400/20 shadow-inner overflow-hidden" style={{ minHeight: 0 }}>
         {/* Chat Area */}
-        <div className="flex-1 overflow-y-auto px-4 py-4 flex flex-col gap-2" style={{ minHeight: 0 }}>
+        <div className="flex-1  overflow-y-auto px-4 py-4 flex flex-col gap-2" style={{ minHeight: 0 }}>
           {chat.map((msg, idx) => (
             <div key={idx} className={
               msg.sender === "user"
@@ -344,7 +337,7 @@ export default function QuestionListeningStage({ difficulty, onComplete, onBack 
             onChange={e => setUserInput(e.target.value)}
             placeholder="Type your answer..."
             className={cn(
-              "flex-1 min-h-[40px] max-h-32 resize-none rounded-lg font-mono text-base",
+              "flex-1 min-h-[90px] max-h-32 resize-none rounded-lg font-mono text-base",
               "bg-black/60 border border-cyan-400/20 text-cyan-100 placeholder-cyan-300/50",
               "focus:border-cyan-400 focus:outline-none px-3 py-2"
             )}

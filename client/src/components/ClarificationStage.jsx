@@ -69,85 +69,83 @@ export default function ClarificationStage({ question, difficulty, onProceed }) 
   };
 
   return (
-    <div className="clarification-stage w-full max-w-2xl mx-auto flex flex-col gap-4 p-4">
-      {/* Header */}
-      <div className="text-center">
-        <h2 className="text-2xl font-bold text-cyan-400 mb-2 font-mono">
-          $ Stage 2: Clarification
-        </h2>
-        <p className="text-cyan-300/70 text-base font-mono mb-2">
-          Ask clarifying questions about the problem. You can proceed at any time.
-        </p>
-        <div className="bg-black/70 border border-cyan-400/20 rounded-lg p-3 text-cyan-100 font-mono mb-2">
-          <b>Question:</b> {question}
-        </div>
-      </div>
-
-      {/* Chat Area */}
-      <div
-        className="flex-1 overflow-y-auto bg-black/80 rounded-xl border border-cyan-400/20 shadow-inner px-4 py-4 flex flex-col gap-2"
-        style={{ minHeight: 200, maxHeight: 300 }}
-      >
-        {messages.map((msg, idx) => (
-          <div
-            key={idx}
-            className={
-              msg.sender === "user"
-                ? "self-end bg-green-900 text-green-200 px-4 py-2 rounded-2xl max-w-[70%] shadow-md"
-                : "self-start bg-gray-800 text-cyan-200 px-4 py-2 rounded-2xl max-w-[70%] shadow-md"
-            }
-          >
-            <span>{msg.message}</span>
-          </div>
-        ))}
-        {loading && (
-          <div className="self-start text-cyan-400 italic animate-pulse">
-            Interviewer is typing...
-          </div>
-        )}
-        <div ref={chatEndRef} />
-      </div>
-
-      {/* Input Area */}
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          if (!loading) {
-            handleSend();
-          }
-        }}
-        className="flex gap-2 items-end"
-      >
-        <textarea
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={handleInputKeyDown}
-          placeholder="Ask a clarifying question..."
-          className="flex-1 min-h-[40px] max-h-32 resize-none rounded-lg font-mono text-base bg-black/60 border border-cyan-400/20 text-cyan-100 placeholder-cyan-300/50 focus:border-cyan-400 focus:outline-none px-3 py-2"
-          disabled={loading}
-        />
-        <button
-          type="submit"
-          disabled={!input.trim() || loading}
-          className="px-4 py-1 bg-transparent border border-cyan-400 text-cyan-200 rounded-md font-mono text-base hover:bg-cyan-900 hover:text-white transition shadow-none"
-        >
-          Send
-        </button>
+    <div className="clarification-stage w-full max-w-5xl mx-auto flex flex-row gap-8 p-4 items-stretch h-full">
+      {/* Left: Instructions + Input */}
+      <div className="flex-1 flex flex-col justify-between gap-4 max-w-md">
         <div>
-        
+          <h2 className="text-2xl font-bold text-cyan-400 font-mono">
+            $ Stage 2: Clarification
+          </h2>
+          <p className="text-cyan-300/70 text-base font-mono">
+            Ask clarifying questions about the problem. You can proceed at any time.
+          </p>
+          <div className="bg-black/70 border border-cyan-400/20 rounded-lg p-3 text-cyan-100 font-mono mt-4">
+            <b>Question:</b> {question}
+          </div>
         </div>
-      </form>
+        {/* Input Area at the bottom left */}
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (!loading) {
+              handleSend();
+            }
+          }}
+          className="flex gap-2 items-end"
+        >
+          <textarea
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={handleInputKeyDown}
+            placeholder="Ask a clarifying question..."
+            className="flex-1 min-h-[40px] max-h-32 resize-none rounded-lg font-mono text-base bg-black/60 border border-cyan-400/20 text-cyan-100 placeholder-cyan-300/50 focus:border-cyan-400 focus:outline-none px-3 py-2"
+            disabled={loading}
+          />
+          <button
+            type="submit"
+            disabled={!input.trim() || loading}
+            className="px-4 py-1 bg-transparent border border-cyan-400 text-cyan-200 rounded-md font-mono text-base hover:bg-cyan-900 hover:text-white transition shadow-none"
+          >
+            Send
+          </button>
+        </form>
+      </div>
 
-      {/* Proceed Button - minimalist and terminal-compatible */}
-      <div className="flex justify-center mt-2">
-  <button
-    className="px-4 py-1 bg-transparent border border-cyan-400 text-cyan-200 rounded-md font-mono text-base hover:bg-cyan-900 hover:text-white transition shadow-none"
-    onClick={onProceed}
-  >
-    Proceed
-  </button>
-</div>  
-
+      {/* Right: Chat Area + Proceed */}
+      <div className="flex-1 flex flex-col gap-4 min-w-[340px] max-w-2xl h-full">
+        <div
+          className="flex-1 overflow-y-auto bg-black/80 rounded-xl border border-cyan-400/20 shadow-inner px-4 py-4 flex flex-col gap-2"
+          style={{ minHeight: 200 }}
+        >
+          {messages.map((msg, idx) => (
+            <div
+              key={idx}
+              className={
+                msg.sender === "user"
+                  ? "self-end bg-green-900 text-green-200 px-4 py-2 rounded-2xl max-w-[70%] shadow-md"
+                  : "self-start bg-gray-800 text-cyan-200 px-4 py-2 rounded-2xl max-w-[70%] shadow-md"
+              }
+            >
+              <span>{msg.message}</span>
+            </div>
+          ))}
+          {loading && (
+            <div className="self-start text-cyan-400 italic animate-pulse">
+              Interviewer is typing...
+            </div>
+          )}
+          <div ref={chatEndRef} />
+        </div>
+        {/* Proceed Button */}
+        <div className="flex justify-center">
+          <button
+            className="px-4 py-1 bg-transparent border border-cyan-400 text-cyan-200 rounded-md font-mono text-base hover:bg-cyan-900 hover:text-white transition shadow-none"
+            onClick={onProceed}
+          >
+            Proceed
+          </button>
+        </div>
+      </div>
       {/* Error Message */}
       {error && (
         <div className="text-red-400 text-center mt-2">{error}</div>

@@ -1,6 +1,6 @@
 import { SignedIn, SignedOut, RedirectToSignIn, useUser } from "@clerk/clerk-react";
 import StellarBackground from "../components/StellarBackground";
-import { useState } from "react";
+import { useState , useEffect } from "react";
 import DashboardNavbar from "../components/DashboardNavbar";
 import { useNavigate } from "react-router-dom";
 import TerminalShell from "@/components/TerminalShell";
@@ -9,6 +9,7 @@ import QuestionListeningStage from "@/components/QuestionListeningStage";
 import ClarificationStage from "@/components/ClarificationStage"; // Added ClarificationStage import
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import Stage3ApproachAnalysis  from "@/components/Stage3ApproachAnalysis";
 
 function LoadingOverlay() {
   return (
@@ -140,10 +141,29 @@ export default function Dashboard() {
     }
   };
 
+
+  
+
   const handleProceedToStage3 = () => {
-    // setCurrentStage("stage3");
-    // ...your logic for next stage
+    setShowLoader(true);
+    setTimeout(() => {
+      setShowLoader(false);
+      setUnlockedStages(prev => {
+        if (!prev.includes("stage3")) {
+          return [...prev, "stage3"];
+        }
+        return prev;
+      });
+      setCurrentStage("stage3");
+    }, 1500); // 1.5 seconds loader/transition
   };
+
+  // 6. Handle completion of Stage 3 (e.g., move to Stage 4)
+const handleStage3Complete = (approaches) => {
+  setStage3Approaches(approaches);
+  // setCurrentStage("stage4"); // or whatever your next stage is
+  // Optionally show a loader here as well
+};
 
   const getStageContent = () => {
     if (showLoader) {
@@ -178,6 +198,15 @@ export default function Dashboard() {
             onProceed={handleProceedToStage3}
           />
         );
+      case "stage3":
+        return (
+          <Stage3ApproachAnalysis
+            question={stage1Question}
+            difficulty={difficulty}
+            onStageComplete={handleStage3Complete}
+          />
+        );
+      // case "stage4": return <Stage4Component ... />
       default:
         return <DifficultySelection onSelect={handleDifficultySelect} />;
     }
@@ -191,6 +220,8 @@ export default function Dashboard() {
         return <span className="text-green-300 font-semibold">Step 2 of 5</span>;
       case "clarification":
         return <span className="text-green-300 font-semibold">Step 3 of 5</span>;
+        case "stage3":
+          return <span className="text-green-300 font-semibold">Step 4 of 5</span>;
       default:
         return <span className="text-cyan-300 font-semibold">Step 1 of 5</span>;
     }
@@ -204,6 +235,8 @@ export default function Dashboard() {
         return "Question Listening Stage";
       case "clarification":
         return "Clarification Stage";
+      case "stage3":
+        return "Approach Analysis Stage"
       default:
         return "Interview Setup";
     }

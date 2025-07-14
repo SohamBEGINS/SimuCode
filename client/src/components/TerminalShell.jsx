@@ -57,11 +57,11 @@ export default function TerminalShell({
       </CardHeader>
       
       <CardContent className={cn(
-        "flex-1 px-8 py-6 overflow-hidden",
+        "flex-1 flex flex-col h-0 p-0 overflow-hidden",
         "bg-black/90 backdrop-blur-sm transition-all duration-300"
       )}>
         <div className={cn(
-          "relative h-full",
+          "relative flex-1 h-full flex flex-col",
           "before:absolute before:inset-0 before:rounded-xl",
           "before:bg-gradient-to-br before:from-cyan-400/5 before:to-blue-400/5",
           "before:blur-xl before:-z-10"
