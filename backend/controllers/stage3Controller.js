@@ -32,7 +32,7 @@ CANDIDATE'S APPROACH:
 - Space Complexity: ${approach.spaceComplexity}
 
 Your task:
-1. If the approach is incorrect, explain why and ask the candidate to try again.
+1. If the approach is incorrect or the user has incorrectly input the space of time complexity of the problem even though the problem is correct, explain why and ask the candidate to try again.
 2. If the approach is correct but not optimal, explain why but dont tell the efficient solution just ask the candidate to improve time or space complexity if possible.
 3. If the approach is correct and optimal, say so and tell the candidate they can proceed to coding.
 Do not spit out the solution .
