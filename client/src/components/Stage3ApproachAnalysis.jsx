@@ -55,10 +55,7 @@ export default function Stage3ApproachAnalysis({
     }
   };
 
-  // Handles proceeding to Stage 4
-  const handleProceedToStage4 = () => {
-    onStageComplete(approaches);
-  };
+  
 
   return (
     
@@ -69,6 +66,7 @@ export default function Stage3ApproachAnalysis({
             onSubmit={handleApproachSubmit}
             disabled={isAnalyzing}
             canProceed={canProceed}
+            
           />
         </div>
         
@@ -79,6 +77,7 @@ export default function Stage3ApproachAnalysis({
             feedback={feedback}
             suggestion={suggestion}
             canProceed={canProceed}
+            onProceed={() => onStageComplete(approaches)}
           />
         </div>
       </div>

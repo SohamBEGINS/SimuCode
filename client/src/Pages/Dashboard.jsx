@@ -10,6 +10,7 @@ import ClarificationStage from "@/components/ClarificationStage"; // Added Clari
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import Stage3ApproachAnalysis  from "@/components/Stage3ApproachAnalysis";
+import Stage4CodingRound from "@/components/Stage4CodingRound";
 
 function LoadingOverlay() {
   return (
@@ -53,6 +54,7 @@ export default function Dashboard() {
   const [showLoader, setShowLoader] = useState(false); // Add loader state
   const [stage1Question, setStage1Question] = useState(""); // Store question for Stage 2
   const [interviewStarted, setInterviewStarted] = useState(false);
+  const [stage3Approaches, setStage3Approaches] = useState([]);
   // Add some debugging
   console.log("Dashboard loading state:", { isLoaded, isSignedIn, user });
 
@@ -159,10 +161,33 @@ export default function Dashboard() {
   };
 
   // 6. Handle completion of Stage 3 (e.g., move to Stage 4)
-const handleStage3Complete = (approaches) => {
+const handleProceedToStage4 = (approaches) => {
   setStage3Approaches(approaches);
-  // setCurrentStage("stage4"); // or whatever your next stage is
-  // Optionally show a loader here as well
+  setShowLoader(true);
+  setTimeout(() => {
+    setShowLoader(false);
+    setUnlockedStages(prev => {
+      if (!prev.includes("stage4")) {
+        return [...prev, "stage4"];
+      }
+      return prev;
+    });
+    setCurrentStage("stage4");
+  }, 1500);
+};
+
+const handleFinishStage4 = () => {
+  setShowLoader(true);
+  setTimeout(() => {
+    setShowLoader(false);
+    setUnlockedStages(prev => {
+      if (!prev.includes("summary")) {
+        return [...prev, "summary"];
+      }
+      return prev;
+    });
+    setCurrentStage("summary");
+  }, 1500);
 };
 
   const getStageContent = () => {
@@ -203,10 +228,18 @@ const handleStage3Complete = (approaches) => {
           <Stage3ApproachAnalysis
             question={stage1Question}
             difficulty={difficulty}
-            onStageComplete={handleStage3Complete}
+            onStageComplete={handleProceedToStage4}
           />
         );
-      // case "stage4": return <Stage4Component ... />
+        case "stage4":
+          return (
+            <Stage4CodingRound
+              approaches={stage3Approaches}
+              question={stage1Question}
+              difficulty={difficulty}
+              onFinish={handleFinishStage4}
+            />
+          );
       default:
         return <DifficultySelection onSelect={handleDifficultySelect} />;
     }
@@ -215,13 +248,16 @@ const handleStage3Complete = (approaches) => {
   const getStageProgress = () => {
     switch (currentStage) {
       case "difficulty-selection":
-        return <span className="text-cyan-300 font-semibold">Step 1 of 5</span>;
+        return <span className="text-cyan-300 font-semibold">Step 0 of 5</span>;
       case "question-listening":
-        return <span className="text-green-300 font-semibold">Step 2 of 5</span>;
+        return <span className="text-green-300 font-semibold">Step 1 of 5</span>;
       case "clarification":
-        return <span className="text-green-300 font-semibold">Step 3 of 5</span>;
+        return <span className="text-green-300 font-semibold">Step 2 of 5</span>;
         case "stage3":
+          return <span className="text-green-300 font-semibold">Step 3 of 5</span>;
+        case "stage4":
           return <span className="text-green-300 font-semibold">Step 4 of 5</span>;
+        
       default:
         return <span className="text-cyan-300 font-semibold">Step 1 of 5</span>;
     }
@@ -237,6 +273,9 @@ const handleStage3Complete = (approaches) => {
         return "Clarification Stage";
       case "stage3":
         return "Approach Analysis Stage"
+      case "stage4":
+        return "Coding  Stage"
+      
       default:
         return "Interview Setup";
     }

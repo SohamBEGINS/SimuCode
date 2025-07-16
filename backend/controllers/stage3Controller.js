@@ -5,8 +5,7 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 });
 
-// In-memory storage for session data (in production, use Redis or MongoDB)
-const sessionData = new Map();
+
 
 /**
  * Stage 3 Agent: Analyzes user approaches and gives immediate verdict/feedback.
@@ -103,35 +102,3 @@ exports.analyzeApproach = async (req, res) => {
   }
 };
 
-/**
- * Controller function: Gets session data for Stage 4.
- * This provides the validated approaches to the coding stage.
- */
-exports.getStage3Data = async (req, res) => {
-  const { sessionId } = req.params;
-
-  try {
-    const session = sessionData.get(sessionId);
-    if (!session) {
-      return res.status(404).json({ error: 'Session not found' });
-    }
-
-    // Return only optimal approaches for Stage 4
-    const correctApproaches = session.approaches.filter(
-        a => a.verdict === 'SUBOPTIMAL' || a.verdict === 'OPTIMAL'
-      );
-      
-      res.json({
-        success: true,
-        approaches: correctApproaches,
-        totalApproaches: session.approaches.length
-      });
-
-  } catch (error) {
-    console.error('Stage 3 get data error:', error);
-    res.status(500).json({
-      error: 'Failed to get stage 3 data',
-      details: error.message
-    });
-  }
-};
