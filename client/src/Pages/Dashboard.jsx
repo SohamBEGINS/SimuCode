@@ -330,6 +330,8 @@ const handleFinishStage4 = (codingErrors) => {
         return "Approach Analysis Stage"
       case "stage4":
         return "Coding  Stage"
+      case "summary&Feedback":
+        return "Summary And Feedback"
       
       default:
         return "Interview Setup";
@@ -346,37 +348,42 @@ const handleFinishStage4 = (codingErrors) => {
           <div className="relative h-screen flex flex-col">
             <DashboardNavbar 
               unlockedStages={unlockedStages} 
-              currentStage={currentStage}
+              currentStage={currentStage === "summary" ? "summary&feedback" : currentStage}
               onNav={(stage) => { console.log("Navigation to:", stage); }} 
             />
-            
-            <div className={cn(
-              "flex-1 flex flex-col px-4 pb-4 mt-16 overflow-hidden transition-all duration-700 ease-in-out",
-              interviewStarted ? "pt-4" : "pt-8" // NEW: Reduce top padding when interview starts
-            )}>
-              <div className={cn(
-                "flex-shrink-0 transition-all duration-700 ease-in-out",
-                interviewStarted ? "h-0 overflow-hidden" : "h-auto"
-              )}>
-                {topContent}
+            {currentStage === "summary" ? (
+              <div className="flex-1 flex flex-col px-4 pb-4 mt-16 overflow-hidden transition-all duration-700 ease-in-out">
+                <SummaryAndFeedback summaryData={summaryData} />
               </div>
+            ) : (
               <div className={cn(
-                "flex-1 flex items-center justify-center transition-all duration-700 ease-in-out",
-                interviewStarted ? "transform -translate-y-8" : "transform translate-y-0"
+                "flex-1 flex flex-col px-4 pb-4 mt-16 overflow-hidden transition-all duration-700 ease-in-out",
+                interviewStarted ? "pt-4" : "pt-8"
               )}>
-                <TerminalShell
-                  title={getStageTitle()}
-                  progress={getStageProgress()}
-                  footer={null}
-                  className={cn(
-                    "transition-all duration-700 ease-in-out",
-                    interviewStarted ? "scale-105" : "scale-100" // NEW: Make terminal bigger
-                  )}
-                >
-                  {getStageContent()}
-                </TerminalShell>
+                <div className={cn(
+                  "flex-shrink-0 transition-all duration-700 ease-in-out",
+                  interviewStarted ? "h-0 overflow-hidden" : "h-auto"
+                )}>
+                  {topContent}
+                </div>
+                <div className={cn(
+                  "flex-1 flex items-center justify-center transition-all duration-700 ease-in-out",
+                  interviewStarted ? "transform -translate-y-8" : "transform translate-y-0"
+                )}>
+                  <TerminalShell
+                    title={getStageTitle()}
+                    progress={getStageProgress()}
+                    footer={null}
+                    className={cn(
+                      "transition-all duration-700 ease-in-out",
+                      interviewStarted ? "scale-105" : "scale-100"
+                    )}
+                  >
+                    {getStageContent()}
+                  </TerminalShell>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </SignedIn>

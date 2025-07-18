@@ -7,7 +7,7 @@ const stages = [
   { key: "stage2", label: "Stage 2" },
   { key: "stage3", label: "Stage 3" },
   { key: "stage4", label: "Stage 4" },
-  { key: "summary", label: "Summary and feedback" },
+  { key: "summary&Feedback", label: "Summary and feedback" },
   
 ];
 
