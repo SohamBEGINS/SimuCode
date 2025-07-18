@@ -32,18 +32,35 @@ export default function Stage4CodingRound({ approaches, question, difficulty, on
       const data = await res.json();
       if (data.status === "correct") {
         setStatusByIdx({ ...statusByIdx, [selectedIdx]: "correct" });
-        setErrorByIdx({ ...errorByIdx, [selectedIdx]: null });
+        setErrorByIdx({ ...errorByIdx, [selectedIdx]:[] });
       } else {
         setStatusByIdx({ ...statusByIdx, [selectedIdx]: "error" });
-        setErrorByIdx({ ...errorByIdx, [selectedIdx]: data.message || "Unknown error" });
+        setErrorByIdx(prev => ({
+          ...prev,
+          [selectedIdx]: [...(prev[selectedIdx] || []), data.message || "Unknown error"]
+        }));
       }
     } catch (err) {
       setStatusByIdx({ ...statusByIdx, [selectedIdx]: "error" });
-      setErrorByIdx({ ...errorByIdx, [selectedIdx]: "Network error" });
+      setErrorByIdx(prev => ({
+        ...prev,
+        [selectedIdx]: [...(prev[selectedIdx] || []), "Network error"]
+      }));
     } finally {
       setSubmitting(false);
     }
   };
+
+  const handleFinish = () => {
+    // Prepare codingErrors as an array of { approachIdx, errorMessages }
+    const codingErrors = Object.entries(errorByIdx).map(([idx, errors]) => ({
+      approachIdx: Number(idx),
+      errorMessages: errors
+    }));
+    onFinish(codingErrors); // Pass to parent (Dashboard)
+  };
+
+
 
   // Close tip on outside click
   React.useEffect(() => {
@@ -159,13 +176,18 @@ export default function Stage4CodingRound({ approaches, question, difficulty, on
           />
         </div>
         {/* Error Message */}
-        {statusByIdx[selectedIdx] === "error" && (
-          <div className="w-full mt-3 flex items-center justify-center">
-            <div className="bg-red-900/80 border border-red-400 text-red-200 font-mono px-6 py-3 rounded-lg shadow-lg text-base animate-fade-in">
-              {errorByIdx[selectedIdx]}
-            </div>
-          </div>
-        )}
+        {statusByIdx[selectedIdx] === "error" && errorByIdx[selectedIdx] && (
+  <div className="w-full mt-3 flex flex-col items-center justify-center">
+    {errorByIdx[selectedIdx].map((msg, i) => (
+      <div
+        key={i}
+        className="bg-red-900/80 border border-red-400 text-red-200 font-mono px-6 py-3 rounded-lg shadow-lg text-base animate-fade-in mb-2"
+      >
+        {msg}
+      </div>
+    ))}
+  </div>
+)}
         {/* Buttons */}
         <div className="w-full flex flex-row gap-3 mt-6 justify-end">
           <button
@@ -177,7 +199,7 @@ export default function Stage4CodingRound({ approaches, question, difficulty, on
           </button>
           <button
             className="px-5 py-2 border border-cyan-400 text-cyan-200 bg-transparent hover:bg-green-900/20 rounded-full font-mono text-base transition focus:outline-none focus:ring-2 focus:ring-green-300"
-            onClick={onFinish}
+            onClick={handleFinish}
           >
             Finish
           </button>

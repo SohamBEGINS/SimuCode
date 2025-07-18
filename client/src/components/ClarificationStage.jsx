@@ -6,6 +6,7 @@ export default function ClarificationStage({ question, difficulty, onProceed }) 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const chatEndRef = useRef(null);
+  const [clarificationQuestions, setClarificationQuestions] = useState([]);
 
   // Scroll chat to bottom on new message
   useEffect(() => {
@@ -21,6 +22,7 @@ export default function ClarificationStage({ question, difficulty, onProceed }) 
 
     const userMsg = { sender: "user", message: input.trim() };
     setMessages((prev) => [...prev, userMsg]);
+    setClarificationQuestions(prev => [...prev, input.trim()]); // <-- Add this line
     setInput("");
 
     try {
@@ -140,7 +142,7 @@ export default function ClarificationStage({ question, difficulty, onProceed }) 
         <div className="flex justify-center">
           <button
             className="px-4 py-1 bg-transparent border border-cyan-400 text-cyan-200 rounded-md font-mono text-base hover:bg-cyan-900 hover:text-white transition shadow-none"
-            onClick={onProceed}
+            onClick={() => onProceed(clarificationQuestions)}
           >
             Proceed
           </button>

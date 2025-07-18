@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import Stage3ApproachAnalysis  from "@/components/Stage3ApproachAnalysis";
 import Stage4CodingRound from "@/components/Stage4CodingRound";
+import SummaryAndFeedback from "@/components/SummaryAndFeedback";
 
 function LoadingOverlay() {
   return (
@@ -55,6 +56,12 @@ export default function Dashboard() {
   const [stage1Question, setStage1Question] = useState(""); // Store question for Stage 2
   const [interviewStarted, setInterviewStarted] = useState(false);
   const [stage3Approaches, setStage3Approaches] = useState([]);
+  const [summaryData, setSummaryData] = useState({
+    stage1: {},
+    stage2: {},
+    stage3: {},
+    stage4: {}
+  });
   // Add some debugging
   console.log("Dashboard loading state:", { isLoaded, isSignedIn, user });
 
@@ -116,11 +123,14 @@ export default function Dashboard() {
 
   const handleQuestionComplete = (result) => {
     console.log("Question completed:", result);
+     // Update summaryData for stage 1
+  setSummaryData(prev => ({
+    ...prev,
+    stage1: {
+      incorrectAttempts: result.incorrectAttempts // <-- Make sure this is passed from the child!
+    }
+  }));
     
-     // Store stage data for later use (you can use localStorage or state)
-    const stageResults = JSON.parse(localStorage.getItem('stageResults') || '[]');
-    stageResults.push(result.stageData);
-     localStorage.setItem('stageResults', JSON.stringify(stageResults));
 
     if (result.evaluation === "positive") {
       setUnlockedStages(prev => {
@@ -146,7 +156,39 @@ export default function Dashboard() {
 
   
 
-  const handleProceedToStage3 = () => {
+  const handleProceedToStage3 = async (clarifications) => {
+
+    let feedback = null;
+    if (clarifications.length > 0) {
+      const res = await fetch('/api/interview-summary/clarification-feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          question: stage1Question,
+          clarifications,
+          difficulty
+        })
+      });
+      feedback = await res.json();
+    } else {
+      // Handle the edge case: no clarifications
+      feedback = {
+        quality: "None",
+        comments: [
+          "No clarifying questions were asked. In real interviews, it's often helpful to clarify constraints, edge cases, or input/output details."
+        ]
+      };
+    }
+  
+    // Store in summaryData
+    setSummaryData(prev => ({
+      ...prev,
+      stage2: {
+        clarifications,
+        feedback
+      }
+    }));
+
     setShowLoader(true);
     setTimeout(() => {
       setShowLoader(false);
@@ -161,8 +203,13 @@ export default function Dashboard() {
   };
 
   // 6. Handle completion of Stage 3 (e.g., move to Stage 4)
-const handleProceedToStage4 = (approaches) => {
+const handleProceedToStage4 = (approaches , incorrectApproaches) => {
+  
   setStage3Approaches(approaches);
+  setSummaryData(prev => ({
+    ...prev,
+    stage3: { incorrectApproaches }
+  }));
   setShowLoader(true);
   setTimeout(() => {
     setShowLoader(false);
@@ -176,7 +223,11 @@ const handleProceedToStage4 = (approaches) => {
   }, 1500);
 };
 
-const handleFinishStage4 = () => {
+const handleFinishStage4 = (codingErrors) => {
+  setSummaryData(prev => ({
+    ...prev,
+    stage4: { codingErrors }
+  }));
   setShowLoader(true);
   setTimeout(() => {
     setShowLoader(false);
@@ -240,6 +291,10 @@ const handleFinishStage4 = () => {
               onFinish={handleFinishStage4}
             />
           );
+        
+          case "summary":
+            return <SummaryAndFeedback summaryData={summaryData} />;
+
       default:
         return <DifficultySelection onSelect={handleDifficultySelect} />;
     }

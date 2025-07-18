@@ -15,6 +15,7 @@ export default function Stage3ApproachAnalysis({
   const [verdict, setVerdict] = useState('');
   const [feedback, setFeedback] = useState('');
   const [suggestion, setSuggestion] = useState('');
+  const [incorrectApproaches, setIncorrectApproaches] = useState(0); // <-- Add this
 
   // Handles when user submits an approach from the table
   const handleApproachSubmit = async (approach) => {
@@ -43,6 +44,9 @@ export default function Stage3ApproachAnalysis({
           ...prev,
           { ...approach, verdict: data.verdict, feedback: data.feedback }
         ]);
+      }
+      else if (data.verdict === 'INCORRECT') {
+        setIncorrectApproaches(prev => prev + 1); // <-- Increment on incorrect
       }
       return data.verdict; // <-- return verdict for ApproachTable
     } catch (error) {
@@ -77,7 +81,7 @@ export default function Stage3ApproachAnalysis({
             feedback={feedback}
             suggestion={suggestion}
             canProceed={canProceed}
-            onProceed={() => onStageComplete(approaches)}
+            onProceed={() => onStageComplete(approaches , incorrectApproaches)}
           />
         </div>
       </div>

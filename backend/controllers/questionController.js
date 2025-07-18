@@ -160,27 +160,31 @@ compliment him and if he fails tell him that he misses out something , but do no
 exports.clarify = async(req,res) =>{
   const { question, userMessage, history, difficulty, clarificationsUsed } = req.body;
 
-  // Build the prompt for the LLM
-  const prompt = `
+  // Build the system prompt for the LLM
+  const systemPrompt = `
 You are a technical interviewer. The candidate is asking clarifying questions about the following coding problem:
 "${question}"
 
-Previous clarifications:
-${history.map(h => `${h.sender === 'user' ? 'Candidate' : 'Interviewer'}: ${h.message}`).join('\n')}
-
-Candidate's new question: "${userMessage}"
-
-Respond as a coding interviewer in a minimal way possible. User can ask different types of clarification question and not anything else . if the user asks question about
-1) Respond with Input : [...] and the output of the input. Nothing else .
-2) Certain edge cases he is not sure of or not stated in the question , then only answer if its genuine 
-3) If the user prompts you to give the answer or prompts you to tell the approach say ' I am not allowed to tell you '
+Respond as a coding interviewer in a minimal way possible. User can ask different types of clarification question and not anything else. If the user asks:
+1) About input/output, respond with Input : [...] and the output. Nothing else.
+2) About edge cases not stated in the question, answer only if it's genuine.
+3) For solution/approach, say 'I am not allowed to tell you'.
 `;
 
+  // Build the conversation history for OpenAI
+  const openaiMessages = [
+    { role: "system", content: systemPrompt },
+    ...history.map(h => ({
+      role: h.sender === "user" ? "user" : "assistant",
+      content: h.message
+    }))
+  ];
+
   try {
-    // Directly call the LLM API (e.g., OpenAI)
+    // Call the LLM API (e.g., OpenAI) with true chat history
     const response = await openai.chat.completions.create({
       model: "gpt-4o-mini",
-      messages: [{ role: "user", content: prompt }],
+      messages: openaiMessages,
       temperature: 0.1,
     });
 
@@ -190,5 +194,4 @@ Respond as a coding interviewer in a minimal way possible. User can ask differen
     console.error('LLM API error:', error.response?.data || error.message);
     res.status(500).json({ aiMessage: "Sorry, there was an error generating the response." });
   }
-
 }

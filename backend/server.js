@@ -4,6 +4,7 @@ const connectDB=require("./db");
 const cors=require("cors");
 const stage3Routes = require('./routes/stage3')
 const stage4Routes = require('./routes/stage4')
+const InterviewSummaryRoutes = require('./routes/InterviewSummary')
 
 const app=express();
 
@@ -13,6 +14,7 @@ app.use(express.json());
 app.use("/api/questions",require("./routes/questions"));
 app.use('/api/stage3', stage3Routes);
 app.use('/api/stage4',stage4Routes);
+app.use('/api/interview-summary',InterviewSummaryRoutes);
 
 connectDB().then(()=>{
     console.log("Connected to MongoDB");

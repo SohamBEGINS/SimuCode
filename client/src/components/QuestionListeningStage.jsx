@@ -16,6 +16,7 @@ export default function QuestionListeningStage({ difficulty, onComplete, onBack 
   const [scoreResult,setScoreResult] = useState(null);
   const [chat, setChat] = useState([]); // NEW: Chat history
   const [evaluation, setEvaluation] = useState(null); // NEW: Evaluation result
+  const [incorrectAttempts, setIncorrectAttempts] = useState(0);
   // Add a ref to scroll chat to bottom
   const chatEndRef = useRef(null);
 
@@ -190,6 +191,7 @@ export default function QuestionListeningStage({ difficulty, onComplete, onBack 
       if (result.evaluation === "positive") {
         // User can proceed
         onComplete({
+          incorrectAttempts, // Pass the count!
           chat: result.chat,
           evaluation: result.evaluation
         });
@@ -199,6 +201,7 @@ export default function QuestionListeningStage({ difficulty, onComplete, onBack 
           passed: false,
           feedback: "Please try again. The AI suggests you need to improve your answer."
         });
+        setIncorrectAttempts(prev => prev + 1); // Increment on incorrect
       }
     } catch (error) {
       setError(error.message);

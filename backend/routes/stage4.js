@@ -9,10 +9,10 @@ router.post('/analyze-code', async (req, res) => {
       return res.status(400).json({ status: 'error', message: 'Missing required fields.' });
     }
   
-    console.log('Stage 4 analyze-code called with:', { code, approach, question, difficulty });
+    
     try {
       const aiResult = await analyzeCodeWithAI({ code, approach, question, difficulty });
-      console.log('Stage 4 analyzeCodeWithAI result:', aiResult);
+      
       if (aiResult.status === 'correct') {
         return res.json({ status: 'correct' });
       } else {
