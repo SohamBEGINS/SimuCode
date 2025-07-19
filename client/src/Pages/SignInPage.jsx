@@ -25,7 +25,7 @@ export default function SignInPage()
        
         <div className="flex-1 bg-black/30 backdrop-blur-lg p-14 flex flex-col items-center justify-center">
           <h2 className="text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-200 via-purple-200 to-pink-200 text-center tracking-tight leading-tight mb-4 font-sans">
-            Welcome Back
+            Welcome
           </h2>
           <div className="w-20 h-1 bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 rounded-full mb-0" />
         </div>

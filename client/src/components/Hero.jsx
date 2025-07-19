@@ -10,7 +10,7 @@ const Hero = () => {
         {/* Left Content */}
         <div className="flex-[3] max-w-3xl text-center md:text-left">
           <h1 className="text-white font-extrabold text-[3.5rem] md:text-[5rem] leading-tight mb-2 drop-shadow-xl font-sans">
-            Simulate Real Coding
+            Simulate Real Codin
             <div className="mb-8 inline-block">
             <span className="inline-bloc px-6 py-2 font-extrabold text-white text-[4.5rem] md:text-[5rem] shadow-lg">
               <TypewriterText />
