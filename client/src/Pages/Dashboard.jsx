@@ -232,12 +232,12 @@ const handleFinishStage4 = (codingErrors) => {
   setTimeout(() => {
     setShowLoader(false);
     setUnlockedStages(prev => {
-      if (!prev.includes("summary")) {
-        return [...prev, "summary"];
+      if (!prev.includes("summary&feedback")) {
+        return [...prev, "summary&feedback"];
       }
       return prev;
     });
-    setCurrentStage("summary");
+    setCurrentStage("summary&feedback");
   }, 1500);
 };
 
@@ -292,7 +292,7 @@ const handleFinishStage4 = (codingErrors) => {
             />
           );
         
-          case "summary":
+          case "summary&feedback":
             return <SummaryAndFeedback summaryData={summaryData} />;
 
       default:
@@ -330,7 +330,7 @@ const handleFinishStage4 = (codingErrors) => {
         return "Approach Analysis Stage"
       case "stage4":
         return "Coding  Stage"
-      case "summary&Feedback":
+      case "summary&feedback":
         return "Summary And Feedback"
       
       default:
@@ -351,7 +351,7 @@ const handleFinishStage4 = (codingErrors) => {
               currentStage={currentStage === "summary" ? "summary&feedback" : currentStage}
               onNav={(stage) => { console.log("Navigation to:", stage); }} 
             />
-            {currentStage === "summary" ? (
+            {currentStage === "summary&feedback" ? (
               <div className="flex-1 flex flex-col px-4 pb-4 mt-16 overflow-hidden transition-all duration-700 ease-in-out">
                 <SummaryAndFeedback summaryData={summaryData} />
               </div>

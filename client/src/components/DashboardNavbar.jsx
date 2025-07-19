@@ -7,7 +7,7 @@ const stages = [
   { key: "stage2", label: "Stage 2" },
   { key: "stage3", label: "Stage 3" },
   { key: "stage4", label: "Stage 4" },
-  { key: "summary&Feedback", label: "Summary and feedback" },
+  { key: "summary&feedback", label: "Summary and feedback" },
   
 ];
 
@@ -22,7 +22,7 @@ export default function DashboardNavbar({
       if (currentStage === "clarification") return "stage2";
       if (currentStage === "stage3") return "stage3";
       if (currentStage === "stage4") return "stage4";
-      if (currentStage === "summary&Feedback") return "summary&feedback";
+      if (currentStage === "summary&feedback") return "summary&feedback";
       return "dashboard";
     };
   

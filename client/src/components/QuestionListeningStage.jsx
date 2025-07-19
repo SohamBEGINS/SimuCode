@@ -364,7 +364,7 @@ export default function QuestionListeningStage({ difficulty, onComplete, onBack 
 
       {/* Evaluation result */}
       {evaluation === "positive" && (
-        <div className="mt-4 text-green-400 font-bold">Good job! You may proceed to the next stage.</div>
+        <div className="mt-4 text-green-400 font-bold">Good job! Proceeding to the next stage...</div>
       )}
       {evaluation === "negative" && (
         <div className="mt-4 text-red-400 font-bold">Please try again. The Interviewer suggests you need to improve your answer.</div>

@@ -5,6 +5,7 @@ export default function Stage4CodingRound({ approaches, question, difficulty, on
   const [codeByIdx, setCodeByIdx] = useState({});
   const [statusByIdx, setStatusByIdx] = useState({});
   const [errorByIdx, setErrorByIdx] = useState({});
+  const [allErrorsByIdx, setAllErrorsByIdx] = useState({}); // NEW: accumulate all errors for summary
   const [submitting, setSubmitting] = useState(false);
   const [approachOpen, setApproachOpen] = useState(true);
   const [showTip, setShowTip] = useState(false);
@@ -13,11 +14,19 @@ export default function Stage4CodingRound({ approaches, question, difficulty, on
 
   const handleCodeChange = (e) => {
     setCodeByIdx({ ...codeByIdx, [selectedIdx]: e.target.value });
+    // Clear errors for the current approach in the UI only
+    setErrorByIdx(prev => ({
+      ...prev,
+      [selectedIdx]: []
+    }));
+    setStatusByIdx(prev => ({
+      ...prev,
+      [selectedIdx]: undefined
+    }));
   };
 
   const handleSubmit = async () => {
     setSubmitting(true);
-    setErrorByIdx({ ...errorByIdx, [selectedIdx]: null });
     try {
       const res = await fetch("/api/stage4/analyze-code", {
         method: "POST",
@@ -32,17 +41,30 @@ export default function Stage4CodingRound({ approaches, question, difficulty, on
       const data = await res.json();
       if (data.status === "correct") {
         setStatusByIdx({ ...statusByIdx, [selectedIdx]: "correct" });
-        setErrorByIdx({ ...errorByIdx, [selectedIdx]:[] });
       } else {
         setStatusByIdx({ ...statusByIdx, [selectedIdx]: "error" });
         setErrorByIdx(prev => ({
           ...prev,
-          [selectedIdx]: [...(prev[selectedIdx] || []), data.message || "Unknown error"]
+          [selectedIdx]: [
+            ...(prev[selectedIdx] || []),
+            data.message || "Unknown error"
+          ]
+        }));
+        setAllErrorsByIdx(prev => ({
+          ...prev,
+          [selectedIdx]: [
+            ...(prev[selectedIdx] || []),
+            data.message || "Unknown error"
+          ]
         }));
       }
     } catch (err) {
       setStatusByIdx({ ...statusByIdx, [selectedIdx]: "error" });
       setErrorByIdx(prev => ({
+        ...prev,
+        [selectedIdx]: [...(prev[selectedIdx] || []), "Network error"]
+      }));
+      setAllErrorsByIdx(prev => ({
         ...prev,
         [selectedIdx]: [...(prev[selectedIdx] || []), "Network error"]
       }));
@@ -52,8 +74,8 @@ export default function Stage4CodingRound({ approaches, question, difficulty, on
   };
 
   const handleFinish = () => {
-    // Prepare codingErrors as an array of { approachIdx, errorMessages }
-    const codingErrors = Object.entries(errorByIdx).map(([idx, errors]) => ({
+    // Use allErrorsByIdx for the summary
+    const codingErrors = Object.entries(allErrorsByIdx).map(([idx, errors]) => ({
       approachIdx: Number(idx),
       errorMessages: errors
     }));
