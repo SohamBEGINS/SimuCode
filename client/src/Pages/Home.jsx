@@ -219,7 +219,7 @@ const Home = () => {
               <h3 className="text-3xl md:text-4xl font-extrabold mb-4 tracking-tight bg-gradient-to-r from-cyan-300 via-blue-400 to-purple-400 bg-clip-text text-transparent drop-shadow-lg font-mono">
                 {howItWorksStages[currentStage].title}
               </h3>
-              <p className="text-xl md:text-2xl text-cyan-100 font-mono italic font-light bg-gradient-to-r from-cyan-200/80 via-blue-200/60 to-purple-200/80 bg-clip-text text-transparent drop-shadow mb-2">
+              <p className="text-xl md:text-2xl font-mono italic font-light bg-gradient-to-r from-cyan-200/80 via-blue-200/60 to-purple-200/80 bg-clip-text text-transparent drop-shadow mb-2">
                 {howItWorksStages[currentStage].description}
               </p>
             </div>
