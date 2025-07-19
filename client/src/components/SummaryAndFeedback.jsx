@@ -1,12 +1,17 @@
 import React from "react";
 import { FaCheckCircle, FaQuestionCircle, FaLightbulb, FaCode, FaRedo, FaDownload, FaShareAlt, FaHome } from "react-icons/fa";
 import Confetti from "react-confetti";
+import { useNavigate } from "react-router-dom";
 
 export default function SummaryAndFeedback({ summaryData }) {
   // Example: summaryData = { stage1: {...}, stage2: {...}, stage3: {...}, stage4: {...} }
 
   const hasCodingErrors = summaryData.stage4?.codingErrors?.some(e => e.errorMessages && e.errorMessages.length);
+  const navigate = useNavigate();
 
+  const handleRetake = () => {
+    window.location.reload();
+  };
   return (
     <div className="relative min-h-[600px] w-full py-12 flex flex-col items-center overflow-y-auto animate-fade-in bg-gradient-to-br from-cyan-950 via-gray-900 to-cyan-950 summary-main-content">
       <Confetti numberOfPieces={120} recycle={false} className="pointer-events-none absolute top-0 left-0 w-full h-32 z-10" />
@@ -91,10 +96,9 @@ export default function SummaryAndFeedback({ summaryData }) {
       <div className="w-full border-t border-cyan-400/30 my-12"></div>
       {/* Vertical Action Buttons Column (left side, only on large screens) */}
       <div className="hidden lg:flex flex-col fixed top-1/2 -translate-y-1/2 left-0 z-30 gap-4 px-3 py-6 bg-gradient-to-b from-cyan-950/90 via-gray-900/80 to-transparent rounded-r-2xl shadow-xl border-r border-cyan-400/30">
-        <button className="px-4 py-3 rounded-xl bg-cyan-400 text-white font-bold flex items-center gap-2 shadow-lg hover:bg-cyan-500 transition text-base"><FaRedo /> Retake</button>
-        <button className="px-4 py-3 rounded-xl bg-white border border-cyan-400 text-cyan-500 font-bold flex items-center gap-2 shadow hover:bg-cyan-50 transition text-base"><FaDownload /> Download</button>
+        <button onClick={handleRetake} className="px-4 py-3 rounded-xl bg-cyan-400 text-white font-bold flex items-center gap-2 shadow-lg hover:bg-cyan-500 transition text-base"><FaRedo /> Retake</button>
+        <button  className="px-4 py-3 rounded-xl bg-white border border-cyan-400 text-cyan-500 font-bold flex items-center gap-2 shadow hover:bg-cyan-50 transition text-base"><FaDownload /> Download</button>
         <button className="px-4 py-3 rounded-xl bg-white border border-cyan-400 text-cyan-500 font-bold flex items-center gap-2 shadow hover:bg-cyan-50 transition text-base"><FaShareAlt /> Share</button>
-        <button className="px-4 py-3 rounded-xl bg-white border border-cyan-400 text-cyan-500 font-bold flex items-center gap-2 shadow hover:bg-cyan-50 transition text-base"><FaHome /> Dashboard</button>
       </div>
       {/* Add left padding to main content on large screens so it doesn't overlap the button column */}
       <style>{`@media (min-width: 1024px) {.summary-main-content { padding-left: 90px; }}`}</style>

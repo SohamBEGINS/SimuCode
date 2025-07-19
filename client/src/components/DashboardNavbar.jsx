@@ -1,6 +1,5 @@
 import { useUser, UserButton } from "@clerk/clerk-react";
 
-
 const stages = [
   { key: "dashboard", label: "Dashboard" },
   { key: "stage1", label: "Stage 1" },
@@ -8,35 +7,31 @@ const stages = [
   { key: "stage3", label: "Stage 3" },
   { key: "stage4", label: "Stage 4" },
   { key: "summary&feedback", label: "Summary and feedback" },
-  
 ];
 
 export default function DashboardNavbar({
-   unlockedStages = ["dashboard"], 
-   onNav,
-   currentStage = "difficulty-selection"}) {
+  unlockedStages = ["dashboard"],
+  onNav,
+  currentStage = "difficulty-selection",
+}) {
+  const getActiveStage = () => {
+    if (currentStage === "difficulty-selection") return "dashboard";
+    if (currentStage === "question-listening") return "stage1";
+    if (currentStage === "clarification") return "stage2";
+    if (currentStage === "stage3") return "stage3";
+    if (currentStage === "stage4") return "stage4";
+    if (currentStage === "summary&feedback") return "summary&feedback";
+    return "dashboard";
+  };
 
-    const getActiveStage = () => {
-      if (currentStage === "difficulty-selection") return "dashboard";
-      if (currentStage === "question-listening") return "stage1";
-      if (currentStage === "clarification") return "stage2";
-      if (currentStage === "stage3") return "stage3";
-      if (currentStage === "stage4") return "stage4";
-      if (currentStage === "summary&feedback") return "summary&feedback";
-      return "dashboard";
-    };
-  
-    const activeStage = getActiveStage();
+  const activeStage = getActiveStage();
   return (
-    <nav className="w-full z-50  bg-opacity-80 backdrop-blur-xl border-b border-cyan-400/20 shadow-lg rounded-t-3xl">
-      <div className="max-w-10xl mx-auto flex justify-between items-center px-8 py-5 space-x-10">
-        {/* Logo */}
-        
-          <span className="text-3xl font-extrabold tracking-tight text-cyan-300 font-sans drop-shadow-lg">
-            
-            SimuCode
-          </span>
-        
+    <nav className="top-0 left-0 w-full z-50 bg-gradient-to-r from-black/90 via-gray-900/80 to-black/90 backdrop-blur border-b border-cyan-400/20 shadow-sm">
+      <div className="max-w-7xl mx-auto flex justify-between items-center px-6 py-3">
+        {/* Logo with code accent */}
+        <div className="text-2xl font-extrabold tracking-tight text-cyan-300 font-mono flex items-center select-none">
+          <span className="mr-2 text-cyan-400">&#60;/&#62;</span>SimuCode
+        </div>
         {/* Navigation buttons */}
         <div className="flex space-x-5">
           {stages.map((stage) => (
@@ -44,7 +39,7 @@ export default function DashboardNavbar({
               key={stage.key}
               onClick={() => onNav && onNav(stage.key)}
               disabled={!unlockedStages.includes(stage.key)}
-              className={`uppercase text-base font-semibold px-5 py-2 rounded-full transition-all duration-200
+              className={`uppercase text-base font-mono font-semibold px-5 py-2 rounded-full transition-all duration-200
                 ${
                   unlockedStages.includes(stage.key)
                     ? (activeStage === stage.key
@@ -63,7 +58,7 @@ export default function DashboardNavbar({
           ))}
         </div>
         {/* UserButton aligned right, bigger, black background, circular */}
-        <div className=" flex items-center">
+        <div className="flex items-center">
           <div className="w-14 h-14 bg-black/80 rounded-full flex items-center justify-center border-2 border-cyan-300 shadow-lg transition-all duration-200 hover:scale-105">
             <UserButton
               appearance={{

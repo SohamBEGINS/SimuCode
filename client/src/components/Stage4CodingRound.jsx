@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 
+
 export default function Stage4CodingRound({ approaches, question, difficulty, onFinish }) {
   const [selectedIdx, setSelectedIdx] = useState(0);
   const [codeByIdx, setCodeByIdx] = useState({});
@@ -11,6 +12,7 @@ export default function Stage4CodingRound({ approaches, question, difficulty, on
   const [showTip, setShowTip] = useState(false);
 
   const selectedApproach = approaches[selectedIdx];
+
 
   const handleCodeChange = (e) => {
     setCodeByIdx({ ...codeByIdx, [selectedIdx]: e.target.value });
@@ -24,6 +26,8 @@ export default function Stage4CodingRound({ approaches, question, difficulty, on
       [selectedIdx]: undefined
     }));
   };
+
+
 
   const handleSubmit = async () => {
     setSubmitting(true);
