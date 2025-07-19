@@ -1,26 +1,26 @@
 import React from "react";
 import { FaCheckCircle, FaQuestionCircle, FaLightbulb, FaCode, FaRedo, FaDownload, FaShareAlt, FaHome } from "react-icons/fa";
 import Confetti from "react-confetti";
-import { useNavigate } from "react-router-dom";
 
 export default function SummaryAndFeedback({ summaryData }) {
-  // Example: summaryData = { stage1: {...}, stage2: {...}, stage3: {...}, stage4: {...} }
+  
 
   const hasCodingErrors = summaryData.stage4?.codingErrors?.some(e => e.errorMessages && e.errorMessages.length);
-  const navigate = useNavigate();
 
   const handleRetake = () => {
     window.location.reload();
   };
   return (
-    <div className="relative min-h-[600px] w-full py-12 flex flex-col items-center overflow-y-auto animate-fade-in bg-gradient-to-br from-cyan-950 via-gray-900 to-cyan-950 summary-main-content">
+    <div className="relative min-h-[600px] w-full py-12 flex flex-col items-center animate-fade-in bg-gradient-to-br from-cyan-950 via-gray-900 to-cyan-950 summary-main-content">
       <Confetti numberOfPieces={120} recycle={false} className="pointer-events-none absolute top-0 left-0 w-full h-32 z-10" />
       <div className="mb-8 text-center">
         <h1 className="text-5xl font-extrabold text-cyan-200 drop-shadow-lg mb-2 flex items-center justify-center gap-3">
-          <FaCheckCircle className="text-green-400 animate-bounce" />
+          
           Interview Summary
         </h1>
-        <p className="text-lg text-cyan-100/80 max-w-2xl mx-auto font-mono mt-2">
+        <p
+          className="text-xl md:text-2xl font-light font-mono italic mb-8 bg-gradient-to-r from-cyan-200 via-blue-200 to-purple-200 bg-clip-text text-transparent drop-shadow text-center max-w-2xl mx-auto"
+        >
           Congratulations on completing your simulated interview! Here’s a breakdown of your performance and feedback for each stage.
         </p>
       </div>

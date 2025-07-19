@@ -289,7 +289,7 @@ export default function QuestionListeningStage({ difficulty, onComplete, onBack 
               "disabled:opacity-50 disabled:cursor-not-allowed"
             )}
           >
-            {audioLoading ? "Loading..." : isPlaying ? "Playing..." : "▶️ Play Question"}
+            {audioLoading ? "Loading..." : isPlaying ? "Playing..." : "▶️ Listen"}
           </Button>
           
           
