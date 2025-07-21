@@ -13,7 +13,7 @@ const difficulties = [
 		description: [
 			"More hints available",
 			"Extended time limits",
-			"Simpler problems",
+			"Leetcode type easy problems",
 			"Visual aids provided",
 		],
 	},

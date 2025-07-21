@@ -1,13 +1,14 @@
 import { useNavigate } from "react-router-dom";
+ 
 
 const Navbar = () => {
   const navigate = useNavigate();
   return (
     <nav className="top-0 left-0 w-full z-50 bg-gradient-to-r from-black/90 via-gray-900/80 to-black/90 backdrop-blur border-b border-cyan-400/20 shadow-sm">
-      <div className="max-w-7xl mx-auto flex justify-between items-center px-6 py-3">
-        {/* Logo with code accent */}
+      <div className="max-w-7xl mx-auto flex justify-between items-center px-4">
         <div className="text-2xl font-extrabold tracking-tight text-cyan-300 font-mono flex items-center select-none">
-          <span className="mr-2 text-cyan-400">&#60;/&#62;</span>SimuCode
+        <img src="/logo.png" alt="SimuCode Logo" className="h-28 w-28 mr-2 rounded-lg shadow" />
+        SimuCode
         </div>
         <div className="flex items-center space-x-4">
           <button

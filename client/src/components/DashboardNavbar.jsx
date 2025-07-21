@@ -30,7 +30,8 @@ export default function DashboardNavbar({
       <div className="max-w-7xl mx-auto flex justify-between items-center px-6 py-3">
         {/* Logo with code accent */}
         <div className="text-2xl font-extrabold tracking-tight text-cyan-300 font-mono flex items-center select-none">
-          <span className="mr-2 text-cyan-400">&#60;/&#62;</span>SimuCode
+          <img src="/logo.png" alt="SimuCode Logo" className="h-14 w-14 mr-3 rounded-xl shadow-lg" />
+          SimuCode
         </div>
         {/* Navigation buttons */}
         <div className="flex space-x-5">
