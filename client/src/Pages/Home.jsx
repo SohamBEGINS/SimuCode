@@ -250,12 +250,11 @@ const Home = () => {
             <h2 className="text-3xl font-bold text-cyan-300 font-mono mb-4">See It In Action</h2>
             <p className="text-lg text-cyan-100 font-mono mb-4 max-w-xl text-center">Watch a real coding interview simulation. Experience the pressure, the process, and the feedback!</p>
             <div className="relative w-full max-w-3xl rounded-xl min-h-[320px] flex items-center justify-center group">
-              <div className="absolute inset-0 rounded-xl pointer-events-none animate-glow bg-gradient-to-r from-cyan-400/40 via-blue-400/30 to-purple-400/40 blur-lg z-0" />
               <video
                 ref={videoRef}
                 controls
-                className="relative w-full rounded-xl border-2 border-cyan-400/40 shadow-lg bg-black min-h-[320px] z-10"
-                poster="https://peach.blender.org/wp-content/uploads/title_anouncement.jpg?x11217"
+                className="relative w-full max-w-2xl aspect-video object-cover rounded-xl border-2 border-cyan-400/40 shadow-lg bg-black z-10"
+                poster="/logo.png"
                 onPlay={() => setVideoPlaying(true)}
                 onPause={() => setVideoPlaying(false)}
               >
