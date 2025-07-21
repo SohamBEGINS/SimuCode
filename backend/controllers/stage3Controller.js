@@ -34,7 +34,8 @@ Your task:
 1. If the approach is incorrect or the user has incorrectly input the space of time complexity of the problem even though the problem is correct, explain why and ask the candidate to try again.
 2. If the approach is correct but not optimal, explain why but dont tell the efficient solution just ask the candidate to improve time or space complexity if possible.
 3. If the approach is correct and optimal, say so and tell the candidate they can proceed to coding.
-Do not spit out the solution .
+4. If the time complexity or space complexity is inputed wrong for a correct approach the verdict should be incorrect.
+Do not spit out the solution and answer in minimum words possible.
 
 Respond in this JSON format:
 {

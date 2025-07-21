@@ -9,6 +9,8 @@ import stage2Img from '../assets/howitworks/stage2.png';
 import stage3Img from '../assets/howitworks/stage3.png';
 import stage4Img from '../assets/howitworks/stage4.png';
 import summaryImg from '../assets/howitworks/summary.png';
+import { Button } from "../components/ui/button";
+import TypewriterText from "../components/TypewriterText";
 
 
 gsap.registerPlugin(ScrollTrigger);
@@ -77,6 +79,8 @@ const Home = () => {
   const [currentStage, setCurrentStage] = React.useState(0);
   const autoplayRef = React.useRef();
   const prevStageRef = useRef(currentStage);
+  const [videoPlaying, setVideoPlaying] = useState(false);
+  const [terminalInView, setTerminalInView] = useState(false);
 
   // Autoplay logic for timeline
   React.useEffect(() => {
@@ -158,6 +162,8 @@ const Home = () => {
             trigger: codeRef.current,
             start: "top 85%",
             toggleActions: "play none none none",
+            onEnter: () => setTerminalInView(true),
+            once: true,
           },
         }
       );
@@ -241,28 +247,48 @@ const Home = () => {
 
           {/* Demo Video Section */}
           <section className="w-full flex flex-col items-center mt-20">
-            <h2 className="text-3xl font-bold text-cyan-300 font-mono mb-8">See It In Action</h2>
-            <video
-              ref={videoRef}
-              controls
-              className="w-full max-w-3xl rounded-xl border border-cyan-400/20 shadow-lg bg-black min-h-[320px]"
-              poster="https://peach.blender.org/wp-content/uploads/title_anouncement.jpg?x11217"
-            >
-              <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4" />
-              Your browser does not support the video tag.
-            </video>
+            <h2 className="text-3xl font-bold text-cyan-300 font-mono mb-4">See It In Action</h2>
+            <p className="text-lg text-cyan-100 font-mono mb-4 max-w-xl text-center">Watch a real coding interview simulation. Experience the pressure, the process, and the feedback!</p>
+            <div className="relative w-full max-w-3xl rounded-xl min-h-[320px] flex items-center justify-center group">
+              <div className="absolute inset-0 rounded-xl pointer-events-none animate-glow bg-gradient-to-r from-cyan-400/40 via-blue-400/30 to-purple-400/40 blur-lg z-0" />
+              <video
+                ref={videoRef}
+                controls
+                className="relative w-full rounded-xl border-2 border-cyan-400/40 shadow-lg bg-black min-h-[320px] z-10"
+                poster="https://peach.blender.org/wp-content/uploads/title_anouncement.jpg?x11217"
+                onPlay={() => setVideoPlaying(true)}
+                onPause={() => setVideoPlaying(false)}
+              >
+                <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+              {!videoPlaying && (
+                <button
+                  className="absolute inset-0 flex items-center justify-center z-20 bg-black/30 hover:bg-black/10 transition rounded-xl"
+                  style={{ pointerEvents: 'auto' }}
+                  onClick={() => videoRef.current && videoRef.current.play()}
+                  aria-label="Play video"
+                >
+                  <svg className="w-20 h-20 text-cyan-200 drop-shadow-lg" fill="currentColor" viewBox="0 0 84 84"><circle cx="42" cy="42" r="42" fill="currentColor" opacity="0.2"/><polygon points="34,26 62,42 34,58" fill="currentColor" /></svg>
+                </button>
+              )}
+            </div>
+            <div className="mt-4">
+              <Button size="lg" variant="default" onClick={() => window.location.href='/dashboard'}>
+                Try a Live Interview
+              </Button>
+            </div>
           </section>
 
           {/* Terminal Code Snippet/Mockup */}
-          <section ref={codeRef} className="w-full max-w-2xl mx-auto bg-black border border-cyan-400/10 rounded-lg p-10 text-cyan-200 text-xl shadow-inner mt-20 font-mono">
+          <section ref={codeRef} className="w-full max-w-2xl mx-auto bg-black border border-cyan-400/10 rounded-lg p-10 text-cyan-200 text-xl shadow-inner mt-20 font-mono flex flex-col items-center">
             <div className="mb-4 text-cyan-400">~/simucode $</div>
-            <pre>
-{`> Listening to question...
-> Clarifying edge cases...
-> Explaining approach...
-> Coding solution...
-> Getting feedback...`}
-            </pre>
+            <AnimatedTerminalText activate={terminalInView} />
+            <div className="mt-8">
+              <Button size="lg" variant="outline" onClick={() => window.location.href='/dashboard'}>
+                Try Demo
+              </Button>
+            </div>
           </section>
         </TerminalBox>
       </main>
@@ -282,3 +308,48 @@ const Home = () => {
 };
 
 export default Home;
+
+const terminalLines = [
+  '> Listening to question...',
+  '> Clarifying edge cases...',
+  '> Explaining approach...',
+  '> Coding solution...',
+  '> Getting feedback...'
+];
+
+function AnimatedTerminalText({ activate }) {
+  const [displayed, setDisplayed] = React.useState('');
+  const [lineIdx, setLineIdx] = React.useState(0);
+  const [charIdx, setCharIdx] = React.useState(0);
+  const [done, setDone] = React.useState(false);
+  const containerRef = React.useRef(null);
+
+  React.useEffect(() => {
+    if (!activate) return;
+    if (lineIdx < terminalLines.length) {
+      if (charIdx < terminalLines[lineIdx].length) {
+        const timeout = setTimeout(() => {
+          setDisplayed(prev => prev + terminalLines[lineIdx][charIdx]);
+          setCharIdx(charIdx + 1);
+        }, 40);
+        return () => clearTimeout(timeout);
+      } else {
+        const timeout = setTimeout(() => {
+          setDisplayed(prev => prev + '\n');
+          setLineIdx(lineIdx + 1);
+          setCharIdx(0);
+        }, 400);
+        return () => clearTimeout(timeout);
+      }
+    } else {
+      setDone(true);
+    }
+  }, [lineIdx, charIdx, activate]);
+
+  return (
+    <pre ref={containerRef} className="w-full text-cyan-200 text-lg md:text-xl font-mono bg-black rounded-lg p-4 min-h-[160px] text-left whitespace-pre-wrap select-text">
+      {displayed}
+      <span className="animate-pulse">|</span>
+    </pre>
+  );
+}

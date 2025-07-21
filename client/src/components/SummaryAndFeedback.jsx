@@ -15,7 +15,6 @@ export default function SummaryAndFeedback({ summaryData }) {
       <Confetti numberOfPieces={120} recycle={false} className="pointer-events-none absolute top-0 left-0 w-full h-32 z-10" />
       <div className="mb-8 text-center">
         <h1 className="text-5xl font-extrabold text-cyan-200 drop-shadow-lg mb-2 flex items-center justify-center gap-3">
-          
           Interview Summary
         </h1>
         <p
@@ -24,73 +23,60 @@ export default function SummaryAndFeedback({ summaryData }) {
           Congratulations on completing your simulated interview! Here’s a breakdown of your performance and feedback for each stage.
         </p>
       </div>
-      <div className="flex flex-row justify-center items-start gap-16 w-full max-w-[1800px]">
-        {/* Stage 2 Card (left) */}
-        <div className="bg-cyan-100/90 shadow-2xl rounded-2xl p-8 w-[420px] max-w-[600px] min-h-[180px] border-2 border-cyan-400 hover:scale-105 transition-transform duration-300">
-          <div className="flex items-center gap-3 mb-2">
-            <FaQuestionCircle className="text-cyan-700 text-2xl" />
-            <h2 className="text-2xl font-extrabold text-cyan-800">Stage 2: Clarification</h2>
-          </div>
-          <div className="mb-2">
-            <div className="font-semibold text-cyan-700">Your Clarifications:</div>
-            <ul className="list-disc pl-5 text-cyan-900">
-              {summaryData.stage2?.clarifications?.length
-                ? summaryData.stage2.clarifications.map((q, i) => <li key={i}>{q}</li>)
-                : <li className="italic text-cyan-400">No clarifications asked.</li>
-              }
-            </ul>
-          </div>
-          <div>
-            <div className="font-semibold text-cyan-700">AI Feedback:</div>
-            <div className="text-cyan-900">
-              <b>Quality:</b> {summaryData.stage2?.feedback?.quality || "N/A"}
-              <ul className="list-disc pl-5">
-                {summaryData.stage2?.feedback?.comments?.map((c, i) => <li key={i}>{c}</li>)}
-              </ul>
-            </div>
-          </div>
-        </div>
-        {/* Right side: Stack Stage 1, 3, 4 vertically */}
-        <div className="flex flex-col gap-10">
-          {/* Stage 1 Card */}
-          <div className="bg-white/90 shadow-xl rounded-2xl p-6 w-[380px] max-w-[500px] min-h-[80px] border-l-4 border-cyan-400 hover:scale-105 transition-transform duration-300">
-            <div className="flex items-center gap-2 mb-1">
-              <FaLightbulb className="text-yellow-400 text-xl" />
-              <h2 className="text-xl font-bold text-cyan-700">Stage 1: Question</h2>
-            </div>
-            <p className="text-cyan-900 font-mono">Incorrect Attempts: <b>{summaryData.stage1?.incorrectAttempts ?? 0}</b></p>
-          </div>
-          {/* Stage 3 Card */}
-          <div className="bg-white/90 shadow-xl rounded-2xl p-6 w-[380px] max-w-[500px] min-h-[80px] border-l-4 border-cyan-400 hover:scale-105 transition-transform duration-300">
-            <div className="flex items-center gap-2 mb-1">
-              <FaLightbulb className="text-cyan-500 text-xl" />
-              <h2 className="text-xl font-bold text-cyan-700">Stage 3: Approach</h2>
-            </div>
-            <p className="text-cyan-900 font-mono">Incorrect Approaches: <b>{summaryData.stage3?.incorrectApproaches ?? 0}</b></p>
-          </div>
-          {/* Stage 4 Card */}
-          <div className={`shadow-xl rounded-2xl p-6 w-[420px] max-w-[600px] min-h-[100px] border-l-4 ${hasCodingErrors ? "border-red-400 bg-red-50/80" : "border-green-400 bg-white/90"} hover:scale-105 transition-transform duration-300`}>
-            <div className="flex items-center gap-2 mb-1">
-              <FaCode className={hasCodingErrors ? "text-red-500 text-xl" : "text-green-500 text-xl"} />
-              <h2 className="text-xl font-bold text-cyan-700">Stage 4: Coding</h2>
-            </div>
-            <div className="font-mono text-cyan-900 mb-2">Coding Errors:</div>
-            {summaryData.stage4?.codingErrors?.length && hasCodingErrors ? (
-              <ul className="list-disc pl-5 text-cyan-900">
+      <div className="w-full max-w-7xl flex flex-row gap-12 px-4 md:px-12 justify-between items-stretch">
+        {/* Stage 1 */}
+        <section className="flex-1 flex flex-col items-center justify-start gap-4 min-w-[220px]">
+          <FaLightbulb className="text-yellow-400 text-5xl mb-2" />
+          <h2 className="text-3xl font-bold text-cyan-100 mb-2">Stage 1</h2>
+          <div className="text-cyan-100 font-mono text-xl">Incorrect Attempts:</div>
+          <div className="text-cyan-200 font-extrabold text-3xl mb-4">{summaryData.stage1?.incorrectAttempts ?? 0}</div>
+        </section>
+        {/* Stage 2 */}
+        <section className="flex-1 flex flex-col items-center justify-start gap-4 min-w-[260px]">
+          <FaQuestionCircle className="text-cyan-400 text-5xl mb-2" />
+          <h2 className="text-3xl font-bold text-cyan-100 mb-2">Stage 2</h2>
+          <div className="text-cyan-200 font-semibold text-lg mb-1">Your Clarifications</div>
+          <ul className="list-disc pl-5 text-cyan-100 text-base mb-2 w-full">
+            {summaryData.stage2?.clarifications?.length
+              ? summaryData.stage2.clarifications.map((q, i) => <li key={i}>{q}</li>)
+              : <li className="italic text-cyan-400">No clarifications asked.</li>
+            }
+          </ul>
+          <div className="text-cyan-200 font-semibold text-lg mb-1">AI Feedback</div>
+          <div className="text-cyan-100 text-base mb-1"><b>Quality:</b> {summaryData.stage2?.feedback?.quality || "N/A"}</div>
+          <ul className="list-disc pl-5 text-cyan-100 text-base w-full max-h-40 overflow-y-auto">
+            {summaryData.stage2?.feedback?.comments?.map((c, i) => <li key={i}>{c}</li>)}
+          </ul>
+        </section>
+        {/* Stage 3 */}
+        <section className="flex-1 flex flex-col items-center justify-start gap-4 min-w-[220px]">
+          <FaLightbulb className="text-cyan-500 text-5xl mb-2" />
+          <h2 className="text-3xl font-bold text-cyan-100 mb-2">Stage 3</h2>
+          <div className="text-cyan-100 font-mono text-xl">Incorrect Approaches:</div>
+          <div className="text-cyan-200 font-extrabold text-3xl mb-4">{summaryData.stage3?.incorrectApproaches ?? 0}</div>
+        </section>
+        {/* Stage 4 */}
+        <section className="flex-1 flex flex-col items-center justify-start gap-4 min-w-[260px]">
+          <FaCode className={hasCodingErrors ? "text-red-500 text-5xl mb-2" : "text-green-500 text-5xl mb-2"} />
+          <h2 className="text-3xl font-bold text-cyan-100 mb-2">Stage 4</h2>
+          <div className="text-cyan-200 font-semibold text-lg mb-1">Coding Errors</div>
+          {summaryData.stage4?.codingErrors?.length && hasCodingErrors ? (
+            <div className="max-h-56 overflow-y-auto w-full px-2">
+              <ul className="list-disc pl-5 text-red-700 text-base">
                 {summaryData.stage4.codingErrors.filter(e => e.errorMessages && e.errorMessages.length).map(({ approachIdx, errorMessages }) => (
                   <li key={approachIdx} className="mb-2">
                     <b>Approach {approachIdx + 1}:</b>
                     <ul className="list-disc pl-5">
-                      {errorMessages.map((msg, i) => <li key={i} className="text-red-700">{msg}</li>)}
+                      {errorMessages.map((msg, i) => <li key={i} className="break-words">{msg}</li>)}
                     </ul>
                   </li>
                 ))}
               </ul>
-            ) : (
-              <div className="italic text-green-600">No coding errors. Great job!</div>
-            )}
-          </div>
-        </div>
+            </div>
+          ) : (
+            <div className="italic text-green-600 text-lg">No coding errors. Great job!</div>
+          )}
+        </section>
       </div>
       {/* Divider */}
       <div className="w-full border-t border-cyan-400/30 my-12"></div>

@@ -62,6 +62,7 @@ export default function ApproachTable({ onSubmit, disabled, canProceed }) {
       </div>
       <div className="terminal-section-content">
         {/* List correct approaches */}
+        <div className="max-h-60 overflow-y-auto pr-1"></div>
         {correctApproaches.map((approach, idx) => (
           <div key={idx} className="mb-4 p-3 border border-cyan-400/20 rounded-md bg-black/20">
             <div className="font-mono text-cyan-300">Approach {idx + 1}:</div>
@@ -71,6 +72,7 @@ export default function ApproachTable({ onSubmit, disabled, canProceed }) {
             </div>
           </div>
         ))}
+        </div>
 
         {/* Input for new approach */}
         <form onSubmit={handleSubmit} className="new-approach-form relative">
@@ -146,6 +148,6 @@ export default function ApproachTable({ onSubmit, disabled, canProceed }) {
 
        
       </div>
-    </div>
+    
   );
 }
