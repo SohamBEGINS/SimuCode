@@ -93,32 +93,32 @@ export default function QuestionListeningStage({ difficulty, onComplete, onBack 
       const audio = new Audio();
       
       audio.addEventListener('canplaythrough', () => {
-        console.log('Audio preloaded successfully');
+        
         resolve();
       });
       
       audio.addEventListener('error', (e) => {
-        console.error('Audio preload error:', e);
+        
         reject(new Error('Audio preload failed'));
       });
       
       audio.addEventListener('loadeddata', () => {
-        console.log('Audio data loaded');
+        
       });
       
       audio.src = audioUrl;
       audio.load(); // Explicitly load the audio
       
-      // Fallback timeout in case canplaythrough doesn't fire
+      
       setTimeout(() => {
-        console.log('Audio preload timeout fallback');
+        
         resolve();
       }, 3000);
     });
   };
 
 
-  // ENHANCED: Play audio with better error handling
+ 
   const playAudio = async () => {
     if (!audioRef.current || !audioReady) {
       console.log('Audio not ready');
@@ -135,7 +135,7 @@ export default function QuestionListeningStage({ difficulty, onComplete, onBack 
       
       if (playPromise !== undefined) {
         await playPromise;
-        console.log('Audio started playing');
+        
       }
     } catch (error) {
       console.error('Audio play error:', error);
