@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-
+import { API_ENDPOINTS } from "../config/api";
 export default function ClarificationStage({ question, difficulty, onProceed }) {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
@@ -26,7 +26,7 @@ export default function ClarificationStage({ question, difficulty, onProceed }) 
     setInput("");
 
     try {
-      const res = await fetch("/api/questions/clarify", {
+      const res = await fetch(`${API_ENDPOINTS.questions}/clarify`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

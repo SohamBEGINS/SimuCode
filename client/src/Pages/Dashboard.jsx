@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 import Stage3ApproachAnalysis  from "@/components/Stage3ApproachAnalysis";
 import Stage4CodingRound from "@/components/Stage4CodingRound";
 import SummaryAndFeedback from "@/components/SummaryAndFeedback";
-
+import { API_ENDPOINTS } from "../config/api";
 function LoadingOverlay() {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm animate-fade-in">
@@ -159,7 +159,7 @@ export default function Dashboard() {
 
     let feedback = null;
     if (clarifications.length > 0) {
-      const res = await fetch('/api/interview-summary/clarification-feedback', {
+      const res = await fetch(`${API_ENDPOINTS.interviewSummary}/clarification-feedback`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

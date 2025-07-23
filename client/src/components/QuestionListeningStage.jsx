@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { API_ENDPOINTS } from "../config/api";
 
 export default function QuestionListeningStage({ difficulty, onComplete, onBack }) {
   const [question, setQuestion] = useState(null);
@@ -45,7 +46,7 @@ export default function QuestionListeningStage({ difficulty, onComplete, onBack 
     setAudioReady(false); // Reset audio state
     
     try {
-      const response = await fetch(`/api/questions?difficulty=${difficulty}`);
+      const response = await fetch(`${API_ENDPOINTS.questions}?difficulty=${difficulty}`);
       const data = await response.json();
       
       if (!response.ok) {
@@ -169,7 +170,7 @@ export default function QuestionListeningStage({ difficulty, onComplete, onBack 
     // Add user message to chat
     setChat(prev => [...prev, { sender: "user", message: userInput.trim() }]);
     try {
-      const response = await fetch('/api/questions/score', {
+      const response = await fetch(`${API_ENDPOINTS.questions}/score`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

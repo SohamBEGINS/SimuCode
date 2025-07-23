@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-
+import { API_ENDPOINTS } from "../config/api";
 
 export default function Stage4CodingRound({ approaches, question, difficulty, onFinish }) {
   const [selectedIdx, setSelectedIdx] = useState(0);
@@ -32,7 +32,7 @@ export default function Stage4CodingRound({ approaches, question, difficulty, on
   const handleSubmit = async () => {
     setSubmitting(true);
     try {
-      const res = await fetch("/api/stage4/analyze-code", {
+      const res = await fetch(`${API_ENDPOINTS.stage4}/analyze-code`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

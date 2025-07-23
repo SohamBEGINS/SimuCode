@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import ApproachTable from './ApproachTable';
 import AIInterviewerConsole from './AIInterviewerConsole';
+import { API_ENDPOINTS } from "../config/api";
 
 export default function Stage3ApproachAnalysis({ 
   question, 
@@ -19,7 +20,7 @@ export default function Stage3ApproachAnalysis({
   const handleApproachSubmit = async (approach) => {
     setIsAnalyzing(true);
     try {
-      const response = await fetch('/api/stage3/analyze-approach', {
+      const response = await fetch(`${API_ENDPOINTS.stage3}/analyze-approach`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
