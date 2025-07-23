@@ -3,7 +3,7 @@ import Navbar from "../components/Navbar";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-import stage0Img from'@/assets/howitworks/stage0.png'
+import stage0Img from '@/assets/howitworks/stage0.png'
 import stage1Img from '../assets/howitworks/stage1.png';
 import stage2Img from '../assets/howitworks/stage2.png';
 import stage3Img from '../assets/howitworks/stage3.png';
