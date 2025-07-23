@@ -4,9 +4,16 @@ import BeamBackground from "@/components/BeamBackground";
 
 export default function SignInPage() 
 {
-  const { isSignedIn } = useUser();
+  const { isSignedIn, isLoaded } = useUser();
+  
+  // Wait for Clerk to load
+  if (!isLoaded) {
+    return <div>Loading...</div>;
+  }
+  
+  // If already signed in, redirect to dashboard
   if (isSignedIn) {
-    return <Navigate to="/dashboard" />;
+    return <Navigate to="/dashboard" replace />;
   }
 
   return (
