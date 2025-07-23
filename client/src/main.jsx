@@ -7,7 +7,13 @@ import {ClerkProvider} from '@clerk/clerk-react'
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
 
-console.log('Clerk Key:', PUBLISHABLE_KEY ? 'Present' : 'Missing');
+// Enhanced debugging
+console.log('=== CLERK DEBUGGING ===');
+console.log('Environment Mode:', import.meta.env.MODE);
+console.log('Clerk Key Present:', !!PUBLISHABLE_KEY);
+console.log('Clerk Key Length:', PUBLISHABLE_KEY?.length);
+console.log('Clerk Key Prefix:', PUBLISHABLE_KEY?.substring(0, 10) + '...');
+console.log('Full Key (first 20 chars):', PUBLISHABLE_KEY?.substring(0, 20));
 
 if(!PUBLISHABLE_KEY)
 {
