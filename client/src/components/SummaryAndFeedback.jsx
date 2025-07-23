@@ -1,5 +1,5 @@
 import React from "react";
-import { FaCheckCircle, FaQuestionCircle, FaLightbulb, FaCode, FaRedo, FaDownload, FaShareAlt, FaHome } from "react-icons/fa";
+import {  FaQuestionCircle, FaLightbulb, FaCode, FaRedo, FaDownload, FaShareAlt } from "react-icons/fa";
 import Confetti from "react-confetti";
 
 export default function SummaryAndFeedback({ summaryData }) {

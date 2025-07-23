@@ -1,4 +1,4 @@
-import { useUser, UserButton } from "@clerk/clerk-react";
+import {  UserButton } from "@clerk/clerk-react";
 
 const stages = [
   { key: "dashboard", label: "Dashboard" },

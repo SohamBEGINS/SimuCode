@@ -1,6 +1,5 @@
 const express=require("express");
 const router=express.Router();
-const stage3Controller = require('../controllers/stage3Controller');
 
 const {getRandomQuestion , scoreUserInput ,clarify}=require("../controllers/questionController");
 

@@ -10,7 +10,6 @@ import stage3Img from '../assets/howitworks/stage3.png';
 import stage4Img from '../assets/howitworks/stage4.png';
 import summaryImg from '../assets/howitworks/summary.png';
 import { Button } from "../components/ui/button";
-import TypewriterText from "../components/TypewriterText";
 
 
 gsap.registerPlugin(ScrollTrigger);
@@ -78,7 +77,6 @@ const Home = () => {
   const codeRef = useRef(null);
   const [currentStage, setCurrentStage] = React.useState(0);
   const autoplayRef = React.useRef();
-  const prevStageRef = useRef(currentStage);
   const [videoPlaying, setVideoPlaying] = useState(false);
   const [terminalInView, setTerminalInView] = useState(false);
 

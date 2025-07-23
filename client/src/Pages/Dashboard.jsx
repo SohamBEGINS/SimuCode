@@ -1,6 +1,6 @@
 import { SignedIn, SignedOut, RedirectToSignIn, useUser } from "@clerk/clerk-react";
 import StellarBackground from "../components/StellarBackground";
-import { useState , useEffect } from "react";
+import { useState} from "react";
 import DashboardNavbar from "../components/DashboardNavbar";
 import { useNavigate } from "react-router-dom";
 import TerminalShell from "@/components/TerminalShell";
@@ -8,7 +8,6 @@ import DifficultySelection from "@/components/DifficultySelection";
 import QuestionListeningStage from "@/components/QuestionListeningStage";
 import ClarificationStage from "@/components/ClarificationStage"; // Added ClarificationStage import
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 import Stage3ApproachAnalysis  from "@/components/Stage3ApproachAnalysis";
 import Stage4CodingRound from "@/components/Stage4CodingRound";
 import SummaryAndFeedback from "@/components/SummaryAndFeedback";

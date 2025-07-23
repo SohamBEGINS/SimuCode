@@ -45,7 +45,7 @@ export default function QuestionListeningStage({ difficulty, onComplete, onBack 
     setAudioReady(false); // Reset audio state
     
     try {
-      const response = await fetch(`http://localhost:5000/api/questions?difficulty=${difficulty}`);
+      const response = await fetch(`/api/questions?difficulty=${difficulty}`);
       const data = await response.json();
       
       if (!response.ok) {

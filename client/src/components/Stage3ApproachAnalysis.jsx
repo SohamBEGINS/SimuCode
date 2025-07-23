@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
-import TerminalShell from './TerminalShell';
 import ApproachTable from './ApproachTable';
 import AIInterviewerConsole from './AIInterviewerConsole';
-import { Button } from '@/components/ui/button';
 
 export default function Stage3ApproachAnalysis({ 
   question, 
