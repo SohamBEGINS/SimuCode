@@ -1,5 +1,5 @@
 <div align="center">
-  <h1>🚀 SimuCode - AI-Powered Coding Interview Simulator</h1>
+  <h1> SimuCode - AI-Powered Coding Interview Simulator</h1>
   <p><strong>Full-Stack Web Application | React 19 | Node.js | MongoDB</strong></p>
   <p>A comprehensive platform that simulates real coding interviews with AI-powered feedback, voice recognition, and adaptive difficulty levels.</p>
   
@@ -116,10 +116,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 **Contact & Links**
 
-- **Portfolio**: [Your Portfolio URL]
-- **LinkedIn**: [Your LinkedIn Profile]
-- **Email**: [Your Email]
-- **GitHub**: [Your GitHub Profile]
+- **LinkedIn**: https://www.linkedin.com/in/soiamcoding
+- **Email**: gangulysoham67@gmail.com
+- **GitHub**: https://github.com/SohamBEGINS
 
 ---
 
