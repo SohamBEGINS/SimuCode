@@ -10,6 +10,7 @@ import stage3Img from '../assets/howitworks/stage3.png';
 import stage4Img from '../assets/howitworks/stage4.png';
 import summaryImg from '../assets/howitworks/summary.png';
 import { Button } from "../components/ui/button";
+import demoVideo from '../assets/videos/demo_video.mp4';
 
 
 gsap.registerPlugin(ScrollTrigger);
@@ -256,7 +257,7 @@ const Home = () => {
                 onPlay={() => setVideoPlaying(true)}
                 onPause={() => setVideoPlaying(false)}
               >
-                <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4" />
+                <source src={demoVideo} type="video/mp4" />
                 Your browser does not support the video tag.
               </video>
               {!videoPlaying && (
