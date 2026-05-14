@@ -1,5 +1,5 @@
 <div align="center">
-  <h1> SimuCode - AI-Powered Coding Interview Simulator</h1>
+  <h1> SimuCode - AI-Powered Coding Interview Platform</h1>
   <p><strong>Full-Stack Web Application | React 19 | Node.js | MongoDB</strong></p>
   <p>A comprehensive platform that simulates real coding interviews with AI-powered feedback, voice recognition, and adaptive difficulty levels.</p>
   
